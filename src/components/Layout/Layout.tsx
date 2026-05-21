@@ -50,7 +50,7 @@ export function AuthLayout() {
 		<div className={styles.shell} style={{ paddingBottom: 0 }}>
 			<header className={styles.header}>
 				<div className={styles.logo}>
-					<Logo className={styles.logoIcon} size={28} />
+					<img src='/dumbbell.svg' alt='' className={styles.logoIcon} />
 					<span className={styles.logoText}>{t('app.name')}</span>
 				</div>
 			</header>
