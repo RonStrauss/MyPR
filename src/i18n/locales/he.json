@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "MyPR",
+    "tagline": "מעקב שיאים אישיים בחדר הכושר"
+  },
+  "nav": {
+    "records": "שיאים",
+    "add": "שיא חדש",
+    "settings": "הגדרות"
+  },
+  "auth": {
+    "signIn": "התחברות",
+    "signUp": "הרשמה",
+    "signOut": "התנתקות",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "confirmPassword": "אימות סיסמה",
+    "google": "המשך עם Google",
+    "noAccount": "אין לך חשבון?",
+    "hasAccount": "כבר יש לך חשבון?",
+    "welcomeBack": "ברוך השב!",
+    "createAccount": "צור חשבון",
+    "subtitle": "עקוב אחרי השיאים שלך בכל תרגיל"
+  },
+  "pr": {
+    "title": "השיאים שלי",
+    "empty": "עדיין אין שיאים — הוסף את הראשון!",
+    "add": "הוסף שיא",
+    "edit": "עריכת שיא",
+    "delete": "מחק",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "exercise": "תרגיל",
+    "weight": "משקל (ק\"ג)",
+    "reps": "חזרות",
+    "date": "תאריך",
+    "notes": "הערות (אופציונלי)",
+    "newPr": "שיא חדש!",
+    "confirmDelete": "למחוק את השיא הזה?"
+  },
+  "settings": {
+    "title": "הגדרות",
+    "language": "שפה",
+    "hebrew": "עברית",
+    "english": "English",
+    "account": "חשבון",
+    "firebaseHint": "הגדר את משתני הסביבה של Firebase בקובץ .env"
+  },
+  "errors": {
+    "generic": "משהו השתבש. נסה שוב.",
+    "authFailed": "ההתחברות נכשלה",
+    "passwordMismatch": "הסיסמאות לא תואמות",
+    "firebaseNotConfigured": "Firebase לא מוגדר — ראה README"
+  },
+  "units": {
+    "kg": "ק\"ג",
+    "reps": "חזרות"
+  }
+}

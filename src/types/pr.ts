@@ -1,0 +1,11 @@
+export type PrRecord = {
+  id: string;
+  exercise: string;
+  weightKg: number;
+  reps: number;
+  date: string;
+  notes?: string;
+  createdAt: number;
+};
+
+export type PrInput = Omit<PrRecord, "id" | "createdAt">;

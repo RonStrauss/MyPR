@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "MyPR",
+    "tagline": "Track your gym personal records"
+  },
+  "nav": {
+    "records": "Records",
+    "add": "New PR",
+    "settings": "Settings"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "google": "Continue with Google",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "welcomeBack": "Welcome back!",
+    "createAccount": "Create account",
+    "subtitle": "Track your PRs for every lift"
+  },
+  "pr": {
+    "title": "My Records",
+    "empty": "No PRs yet — add your first one!",
+    "add": "Add PR",
+    "edit": "Edit PR",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "exercise": "Exercise",
+    "weight": "Weight (kg)",
+    "reps": "Reps",
+    "date": "Date",
+    "notes": "Notes (optional)",
+    "newPr": "New PR!",
+    "confirmDelete": "Delete this record?"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "hebrew": "עברית",
+    "english": "English",
+    "account": "Account",
+    "firebaseHint": "Set Firebase environment variables in a .env file"
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "authFailed": "Authentication failed",
+    "passwordMismatch": "Passwords do not match",
+    "firebaseNotConfigured": "Firebase is not configured — see README"
+  },
+  "units": {
+    "kg": "kg",
+    "reps": "reps"
+  }
+}
