@@ -1,0 +1,200 @@
+import { PRESET_EXERCISES } from "@/constants/exercises";
+import { estimateOneRm } from "@/lib/oneRm";
+import type { PrRecord } from "@/types/pr";
+
+export type ProgressPoint = {
+  date: string;
+  estimated1Rm: number;
+  weightKg: number;
+  reps: number;
+};
+
+export type GroupStats = {
+  id: string;
+  labelKey: string;
+  exercises: string[];
+  avgEstimated1Rm: number | null;
+  avgWeightKg: number | null;
+  prCount: number;
+  bestExercise: string | null;
+  best1Rm: number | null;
+};
+
+export const EXERCISE_GROUPS: { id: string; labelKey: string; exercises: string[] }[] =
+  [
+    {
+      id: "squats",
+      labelKey: "stats.groups.squats",
+      exercises: ["Back Squat", "Front Squat", "Overhead Squat"],
+    },
+    {
+      id: "deadlifts",
+      labelKey: "stats.groups.deadlifts",
+      exercises: ["Deadlift", "Sumo Deadlift"],
+    },
+    {
+      id: "presses",
+      labelKey: "stats.groups.presses",
+      exercises: [
+        "Bench Press",
+        "Strict Press",
+        "Push Press",
+        "Push Jerk",
+        "Split Jerk",
+      ],
+    },
+    {
+      id: "olympic",
+      labelKey: "stats.groups.olympic",
+      exercises: [
+        "Clean",
+        "Power Clean",
+        "Snatch",
+        "Power Snatch",
+        "Thruster",
+      ],
+    },
+    {
+      id: "gymnastics",
+      labelKey: "stats.groups.gymnastics",
+      exercises: [
+        "Pull-up",
+        "Chest-to-Bar Pull-up",
+        "Muscle-up",
+        "Handstand Push-up",
+        "Toes-to-Bar",
+      ],
+    },
+    {
+      id: "cardio",
+      labelKey: "stats.groups.cardio",
+      exercises: ["Row (cal)", "Bike (cal)", "Run"],
+    },
+  ];
+
+export function getExercisesWithData(records: PrRecord[]): string[] {
+  const fromRecords = [...new Set(records.map((r) => r.exercise))];
+  const presets = PRESET_EXERCISES.filter((e) =>
+    records.some((r) => r.exercise === e)
+  );
+  const custom = fromRecords
+    .filter((e) => !(PRESET_EXERCISES as readonly string[]).includes(e))
+    .sort((a, b) => a.localeCompare(b));
+  const presetOrdered = PRESET_EXERCISES.filter((e) => presets.includes(e));
+  return [...presetOrdered, ...custom];
+}
+
+export function getProgressSeries(
+  records: PrRecord[],
+  exercise: string
+): ProgressPoint[] {
+  return records
+    .filter((r) => r.exercise === exercise)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.createdAt - b.createdAt)
+    .map((r) => ({
+      date: r.date,
+      estimated1Rm: Math.round(estimateOneRm(r.weightKg, r.reps) * 10) / 10,
+      weightKg: r.weightKg,
+      reps: r.reps,
+    }));
+}
+
+export function computeGroupStats(
+  records: PrRecord[],
+  group: (typeof EXERCISE_GROUPS)[number]
+): GroupStats {
+  const groupRecords = records.filter((r) =>
+    group.exercises.includes(r.exercise)
+  );
+  if (groupRecords.length === 0) {
+    return {
+      id: group.id,
+      labelKey: group.labelKey,
+      exercises: group.exercises,
+      avgEstimated1Rm: null,
+      avgWeightKg: null,
+      prCount: 0,
+      bestExercise: null,
+      best1Rm: null,
+    };
+  }
+
+  const estimates = groupRecords.map((r) =>
+    estimateOneRm(r.weightKg, r.reps)
+  );
+  const avgEstimated1Rm =
+    Math.round(
+      (estimates.reduce((a, b) => a + b, 0) / estimates.length) * 10
+    ) / 10;
+  const avgWeightKg =
+    Math.round(
+      (groupRecords.reduce((s, r) => s + r.weightKg, 0) /
+        groupRecords.length) *
+        10
+    ) / 10;
+
+  let bestExercise: string | null = null;
+  let best1Rm: number | null = null;
+  for (const ex of group.exercises) {
+    const exRecords = groupRecords.filter((r) => r.exercise === ex);
+    if (exRecords.length === 0) continue;
+    const best = Math.max(
+      ...exRecords.map((r) => estimateOneRm(r.weightKg, r.reps))
+    );
+    if (best1Rm === null || best > best1Rm) {
+      best1Rm = Math.round(best * 10) / 10;
+      bestExercise = ex;
+    }
+  }
+
+  return {
+    id: group.id,
+    labelKey: group.labelKey,
+    exercises: group.exercises,
+    avgEstimated1Rm,
+    avgWeightKg,
+    prCount: groupRecords.length,
+    bestExercise,
+    best1Rm,
+  };
+}
+
+export function computeOverview(records: PrRecord[]) {
+  const exercises = new Set(records.map((r) => r.exercise));
+  const totalVolume = records.reduce(
+    (s, r) => s + r.weightKg * r.reps,
+    0
+  );
+  const best1RmOverall =
+    records.length > 0
+      ? Math.max(...records.map((r) => estimateOneRm(r.weightKg, r.reps)))
+      : null;
+
+  const last30 = records.filter((r) => {
+    const d = new Date(r.date);
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 30);
+    return d >= cutoff;
+  });
+
+  return {
+    totalPrs: records.length,
+    exerciseCount: exercises.size,
+    totalVolume: Math.round(totalVolume),
+    best1RmOverall: best1RmOverall
+      ? Math.round(best1RmOverall * 10) / 10
+      : null,
+    prsLast30Days: last30.length,
+  };
+}
+
+export function getImprovement(
+  series: ProgressPoint[]
+): { delta: number; percent: number } | null {
+  if (series.length < 2) return null;
+  const first = series[0].estimated1Rm;
+  const last = series[series.length - 1].estimated1Rm;
+  const delta = Math.round((last - first) * 10) / 10;
+  const percent = first > 0 ? Math.round((delta / first) * 1000) / 10 : 0;
+  return { delta, percent };
+}

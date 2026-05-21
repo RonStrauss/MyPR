@@ -10,6 +10,7 @@
   "nav": {
     "records": "שיאים",
     "add": "שיא חדש",
+    "stats": "סטטיסטיקה",
     "settings": "הגדרות"
   },
   "auth": {
@@ -54,7 +55,57 @@
     "hebrew": "עברית",
     "english": "English",
     "account": "חשבון",
+    "version": "גרסה",
+    "userId": "מזהה משתמש",
     "firebaseHint": "הגדר את משתני הסביבה של Firebase בקובץ .env"
+  },
+  "stats": {
+    "title": "סטטיסטיקה",
+    "empty": "תעד כמה שיאים כדי לראות סטטיסטיקה.",
+    "totalPrs": "סה\"כ שיאים",
+    "exercises": "תרגילים",
+    "best1Rm": "1RM מקסימלי",
+    "last30": "30 יום אחרונים",
+    "progress": "התקדמות לאורך זמן",
+    "chartUnit": "1RM משוער (ק\"ג)",
+    "noDataForExercise": "אין רשומות לתרגיל הזה עדיין.",
+    "improvement": "+{{delta}} ק\"ג ({{percent}}%) מאז הרשומה הראשונה",
+    "groupAverages": "ממוצעים לפי קבוצה",
+    "groupHint": "ממוצע 1RM משוער ומשקל עבודה לכל משפחת תנועות.",
+    "entries": "רשומות",
+    "noGroupData": "אין עדיין שיאים בקבוצה הזו.",
+    "avg1Rm": "ממוצע 1RM",
+    "avgWeight": "ממוצע משקל",
+    "groupBest": "הטוב ביותר: {{exercise}} — {{weight}} ק\"ג 1RM משוער",
+    "volume": "נפח אימון",
+    "totalVolume": "{{volume}} ק\"ג × חזרות סה\"כ",
+    "groups": {
+      "squats": "סקוואטים",
+      "deadlifts": "דדליפטים",
+      "presses": "לחיצות",
+      "olympic": "הרמות אולימפיות",
+      "gymnastics": "גימנסטיקה",
+      "cardio": "קרדיו / מונוסטרוקטורל"
+    }
+  },
+  "celebration": {
+    "messages": [
+      "אלופים!",
+      "אין עליכם!",
+      "פצצה!",
+      "כל הכבוד!",
+      "שיארוריית!",
+      "מדהימים!",
+      "חזקים!",
+      "אש עליכם!",
+      "וואו!",
+      "מכונה!"
+    ]
+  },
+  "pwa": {
+    "updateMessage": "MyPR התעדכן — רעננו כדי לקבל את כל הטוב הזה ✨",
+    "refresh": "רענון",
+    "later": "אחר כך"
   },
   "errors": {
     "generic": "משהו השתבש. נסה שוב.",

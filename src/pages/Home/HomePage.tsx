@@ -1,8 +1,10 @@
 import { Dumbbell } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { CelebrationOverlay } from "@/components/CelebrationOverlay/CelebrationOverlay";
 import { Loader } from "@/components/Loader/Loader";
+import { pickCelebrationMessage } from "@/lib/celebration";
 import { PrCard } from "@/components/PrCard/PrCard";
 import { PrForm } from "@/components/PrForm/PrForm";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +18,19 @@ export function HomePage() {
   const { user } = useAuth();
   const { records, loading, error } = usePrs(user?.uid);
   const navigate = useNavigate();
+  const location = useLocation();
   const [editing, setEditing] = useState<PrRecord | null>(null);
+  const [celebrationMsg, setCelebrationMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const state = location.state as { celebrate?: boolean } | null;
+    if (!state?.celebrate) return;
+    const msgs = t("celebration.messages", { returnObjects: true });
+    if (Array.isArray(msgs)) {
+      setCelebrationMsg(pickCelebrationMessage(msgs as string[]));
+    }
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.state, location.pathname, navigate, t]);
 
   const totalWeight = records.reduce((sum, r) => sum + r.weightKg, 0);
 
@@ -43,6 +57,12 @@ export function HomePage() {
 
   return (
     <div>
+      {celebrationMsg && (
+        <CelebrationOverlay
+          message={celebrationMsg}
+          onDone={() => setCelebrationMsg(null)}
+        />
+      )}
       <h1 className={styles.title}>{t("pr.title")}</h1>
 
       {records.length > 0 && (

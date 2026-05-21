@@ -46,13 +46,11 @@ body::before {
   inset: 0;
   background:
     radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-glow), transparent),
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       transparent,
       transparent 2px,
       rgba(255, 255, 255, 0.015) 2px,
-      rgba(255, 255, 255, 0.015) 4px
-    );
+      rgba(255, 255, 255, 0.015) 4px);
   pointer-events: none;
   z-index: 0;
 }
@@ -90,6 +88,7 @@ select {
   border: 1px solid var(--border);
   background: var(--bg-elevated);
   transition: border-color 0.15s, box-shadow 0.15s;
+  color-scheme: dark;
 }
 
 input:focus,
@@ -98,6 +97,18 @@ select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .btn {
@@ -201,6 +212,7 @@ select:focus {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -211,6 +223,7 @@ select:focus {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -221,13 +234,36 @@ select:focus {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+.page-fallback {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.page-fallback-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+
   .page-enter,
   .fade-in,
   .list-item-enter {

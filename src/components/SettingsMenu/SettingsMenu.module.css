@@ -118,3 +118,26 @@
   color: var(--text-muted);
   line-height: 1.4;
 }
+
+.meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.meta p {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.metaLabel {
+  font-weight: 600;
+}
+
+.metaValue {
+  font-family: ui-monospace, monospace;
+  color: var(--text);
+}

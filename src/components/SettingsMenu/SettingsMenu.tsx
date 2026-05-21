@@ -4,7 +4,13 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { changeLanguage, type Lang } from "@/i18n";
 import { isFirebaseConfigured } from "@/lib/firebase";
+import { APP_VERSION } from "@/version";
 import styles from "./SettingsMenu.module.css";
+
+function formatUserId(uid: string): string {
+  if (uid.length <= 12) return uid;
+  return `${uid.slice(0, 8)}…${uid.slice(-4)}`;
+}
 
 export function SettingsMenu() {
   const { t, i18n } = useTranslation();
@@ -95,6 +101,23 @@ export function SettingsMenu() {
           {!isFirebaseConfigured && (
             <p className={styles.hint}>{t("settings.firebaseHint")}</p>
           )}
+
+          <div className={styles.divider} />
+
+          <div className={styles.meta}>
+            <p>
+              <span className={styles.metaLabel}>{t("settings.version")}</span>
+              <span className={styles.metaValue}>v{APP_VERSION}</span>
+            </p>
+            {user?.uid && (
+              <p>
+                <span className={styles.metaLabel}>{t("settings.userId")}</span>
+                <span className={styles.metaValue} title={user.uid}>
+                  {formatUserId(user.uid)}
+                </span>
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

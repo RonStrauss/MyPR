@@ -24,7 +24,7 @@ export function AddPrPage() {
   async function handleSubmit(data: PrInput) {
     if (!user) return;
     await addPr(user.uid, data);
-    navigate("/");
+    navigate("/", { state: { celebrate: true } });
   }
 
   return (

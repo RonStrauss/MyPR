@@ -28,8 +28,8 @@
 }
 
 .logoIcon {
-  width: 28px;
-  height: 28px;
+  width: 60px;
+  height: 60px;
 }
 
 .logoText {
@@ -60,10 +60,15 @@
   backdrop-filter: blur(16px);
   border-top: 1px solid var(--border);
   z-index: 20;
+  padding-inline: 1.5rem;
 }
 
 .navItemRecords {
   justify-self: start;
+}
+
+.navItemStats {
+  justify-self: end;
 }
 
 .navItem {

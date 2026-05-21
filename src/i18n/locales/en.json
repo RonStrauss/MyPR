@@ -10,6 +10,7 @@
   "nav": {
     "records": "Records",
     "add": "New PR",
+    "stats": "Stats",
     "settings": "Settings"
   },
   "auth": {
@@ -54,7 +55,55 @@
     "hebrew": "עברית",
     "english": "English",
     "account": "Account",
+    "version": "Version",
+    "userId": "User ID",
     "firebaseHint": "Set Firebase environment variables in a .env file"
+  },
+  "stats": {
+    "title": "Statistics",
+    "empty": "Log some PRs to see your stats.",
+    "totalPrs": "Total PRs",
+    "exercises": "Exercises",
+    "best1Rm": "Best 1RM",
+    "last30": "Last 30 days",
+    "progress": "Progress over time",
+    "chartUnit": "Estimated 1RM (kg)",
+    "noDataForExercise": "No entries for this exercise yet.",
+    "improvement": "+{{delta}} kg ({{percent}}%) since first entry",
+    "groupAverages": "Group averages",
+    "groupHint": "Average estimated 1RM and working weight per movement family.",
+    "entries": "entries",
+    "noGroupData": "No lifts logged in this group yet.",
+    "avg1Rm": "Avg 1RM",
+    "avgWeight": "Avg weight",
+    "groupBest": "Best: {{exercise}} — {{weight}} kg est. 1RM",
+    "volume": "Training volume",
+    "totalVolume": "{{volume}} kg × reps total",
+    "groups": {
+      "squats": "Squats",
+      "deadlifts": "Deadlifts",
+      "presses": "Presses",
+      "olympic": "Olympic lifts",
+      "gymnastics": "Gymnastics",
+      "cardio": "Cardio / monostructural"
+    }
+  },
+  "celebration": {
+    "messages": [
+      "Champions!",
+      "Unstoppable!",
+      "New PR!",
+      "Beast mode!",
+      "Crushing it!",
+      "Legendary!",
+      "That's huge!",
+      "Strong work!"
+    ]
+  },
+  "pwa": {
+    "updateMessage": "MyPR has been updated — refresh to get all this new goodness ✨",
+    "refresh": "Refresh",
+    "later": "Later"
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
