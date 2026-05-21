@@ -1,8 +1,6 @@
 import {
-  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   type User,
@@ -21,8 +19,6 @@ import { auth } from "@/lib/firebase";
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -43,14 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsub;
   }, []);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-  }, []);
-
-  const signUp = useCallback(async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
-  }, []);
-
   const signInWithGoogle = useCallback(async () => {
     await signInWithPopup(auth, googleProvider);
   }, []);
@@ -60,8 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, signIn, signUp, signInWithGoogle, logout }),
-    [user, loading, signIn, signUp, signInWithGoogle, logout]
+    () => ({ user, loading, signInWithGoogle, logout }),
+    [user, loading, signInWithGoogle, logout]
   );
 
   return (

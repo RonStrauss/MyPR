@@ -2,6 +2,7 @@ import { Dumbbell } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "@/components/Loader/Loader";
 import { PrCard } from "@/components/PrCard/PrCard";
 import { PrForm } from "@/components/PrForm/PrForm";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,7 +14,7 @@ import styles from "./Home.module.css";
 export function HomePage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { records, loading } = usePrs(user?.uid);
+  const { records, loading, error } = usePrs(user?.uid);
   const navigate = useNavigate();
   const [editing, setEditing] = useState<PrRecord | null>(null);
 
@@ -59,10 +60,16 @@ export function HomePage() {
         </div>
       )}
 
-      {loading && <p className={styles.loading}>...</p>}
+      {loading && <Loader label={t("common.loading")} />}
 
-      {!loading && records.length === 0 && (
-        <div className={styles.empty}>
+      {error && !loading && (
+        <p className="error-text" style={{ marginBottom: "1rem" }}>
+          {error}
+        </p>
+      )}
+
+      {!loading && !error && records.length === 0 && (
+        <div className={`${styles.empty} fade-in`}>
           <Dumbbell className={styles.emptyIcon} />
           <p>{t("pr.empty")}</p>
           <button
@@ -77,13 +84,18 @@ export function HomePage() {
       )}
 
       <div className={styles.list}>
-        {records.map((record) => (
-          <PrCard
+        {records.map((record, index) => (
+          <div
             key={record.id}
-            record={record}
-            onEdit={setEditing}
-            onDelete={handleDelete}
-          />
+            className="list-item-enter"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <PrCard
+              record={record}
+              onEdit={setEditing}
+              onDelete={handleDelete}
+            />
+          </div>
         ))}
       </div>
     </div>

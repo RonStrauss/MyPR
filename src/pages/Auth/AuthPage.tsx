@@ -1,43 +1,15 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Loader } from "@/components/Loader/Loader";
 import { useAuth } from "@/contexts/AuthContext";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import styles from "./Auth.module.css";
 
-type Mode = "signIn" | "signUp";
-
 export function AuthPage() {
   const { t } = useTranslation();
-  const { signIn, signUp, signInWithGoogle } = useAuth();
-  const [mode, setMode] = useState<Mode>("signIn");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const { signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-
-    if (mode === "signUp" && password !== confirm) {
-      setError(t("errors.passwordMismatch"));
-      return;
-    }
-
-    setLoading(true);
-    try {
-      if (mode === "signIn") {
-        await signIn(email, password);
-      } else {
-        await signUp(email, password);
-      }
-    } catch {
-      setError(t("errors.authFailed"));
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleGoogle() {
     setError(null);
@@ -54,9 +26,7 @@ export function AuthPage() {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <h1 className={styles.heroTitle}>
-          {mode === "signIn" ? t("auth.welcomeBack") : t("auth.createAccount")}
-        </h1>
+        <h1 className={styles.heroTitle}>{t("auth.welcomeBack")}</h1>
         <p className={styles.heroSubtitle}>{t("auth.subtitle")}</p>
       </div>
 
@@ -64,102 +34,21 @@ export function AuthPage() {
         <div className={styles.banner}>{t("errors.firebaseNotConfigured")}</div>
       )}
 
-      <div className={styles.tabs}>
+      {error && <p className="error-text">{error}</p>}
+
+      {loading ? (
+        <Loader label={t("common.loading")} />
+      ) : (
         <button
           type="button"
-          className={`${styles.tab} ${mode === "signIn" ? styles.tabActive : ""}`}
-          onClick={() => setMode("signIn")}
+          className={styles.googleBtn}
+          onClick={handleGoogle}
+          disabled={!isFirebaseConfigured}
         >
-          {t("auth.signIn")}
+          <GoogleIcon />
+          {t("auth.google")}
         </button>
-        <button
-          type="button"
-          className={`${styles.tab} ${mode === "signUp" ? styles.tabActive : ""}`}
-          onClick={() => setMode("signUp")}
-        >
-          {t("auth.signUp")}
-        </button>
-      </div>
-
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="label" htmlFor="email">
-            {t("auth.email")}
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label className="label" htmlFor="password">
-            {t("auth.password")}
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete={
-              mode === "signIn" ? "current-password" : "new-password"
-            }
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-          />
-        </div>
-        {mode === "signUp" && (
-          <div className="form-group">
-            <label className="label" htmlFor="confirm">
-              {t("auth.confirmPassword")}
-            </label>
-            <input
-              id="confirm"
-              type="password"
-              autoComplete="new-password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              required
-              minLength={6}
-            />
-          </div>
-        )}
-        {error && <p className="error-text">{error}</p>}
-        <button
-          type="submit"
-          className={`btn btn-primary ${styles.submit}`}
-          disabled={loading}
-        >
-          {mode === "signIn" ? t("auth.signIn") : t("auth.signUp")}
-        </button>
-      </form>
-
-      <div className={styles.divider}>או / or</div>
-
-      <button
-        type="button"
-        className={styles.googleBtn}
-        onClick={handleGoogle}
-        disabled={loading}
-      >
-        <GoogleIcon />
-        {t("auth.google")}
-      </button>
-
-      <p className={styles.switchMode}>
-        {mode === "signIn" ? t("auth.noAccount") : t("auth.hasAccount")}
-        <button
-          type="button"
-          onClick={() =>
-            setMode(mode === "signIn" ? "signUp" : "signIn")
-          }
-        >
-          {mode === "signIn" ? t("auth.signUp") : t("auth.signIn")}
-        </button>
-      </p>
+      )}
     </div>
   );
 }

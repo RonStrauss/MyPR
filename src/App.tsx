@@ -1,22 +1,15 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { Loader } from "@/components/Loader/Loader";
 import { AuthLayout, Layout } from "@/components/Layout/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddPrPage, HomePage } from "@/pages/Home/HomePage";
 import { AuthPage } from "@/pages/Auth/AuthPage";
 import { SettingsPage } from "@/pages/Settings/SettingsPage";
+import { useTranslation } from "react-i18next";
 
 function LoadingScreen() {
-  return (
-    <div
-      style={{
-        padding: "2rem",
-        textAlign: "center",
-        color: "var(--text-muted)",
-      }}
-    >
-      ...
-    </div>
-  );
+  const { t } = useTranslation();
+  return <Loader label={t("common.loading")} />;
 }
 
 export default function App() {

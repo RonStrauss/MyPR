@@ -1,0 +1,32 @@
+/** Common CrossFit / strength movements for quick selection */
+export const PRESET_EXERCISES = [
+  "Back Squat",
+  "Front Squat",
+  "Overhead Squat",
+  "Deadlift",
+  "Sumo Deadlift",
+  "Bench Press",
+  "Strict Press",
+  "Push Press",
+  "Push Jerk",
+  "Split Jerk",
+  "Clean",
+  "Power Clean",
+  "Snatch",
+  "Power Snatch",
+  "Thruster",
+  "Wall Ball",
+  "Pull-up",
+  "Chest-to-Bar Pull-up",
+  "Muscle-up",
+  "Handstand Push-up",
+  "Toes-to-Bar",
+  "Burpee",
+  "Box Jump",
+  "Double Under",
+  "Row (cal)",
+  "Bike (cal)",
+  "Run",
+] as const;
+
+export const CUSTOM_EXERCISE = "__custom__";

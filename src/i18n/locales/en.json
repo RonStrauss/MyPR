@@ -1,4 +1,8 @@
 {
+  "common": {
+    "loading": "Loading…",
+    "saving": "Saving…"
+  },
   "app": {
     "name": "MyPR",
     "tagline": "Track your gym personal records"
@@ -31,6 +35,10 @@
     "save": "Save",
     "cancel": "Cancel",
     "exercise": "Exercise",
+    "selectExercise": "Choose exercise",
+    "customExercise": "Custom exercise…",
+    "customExerciseName": "Exercise name",
+    "customExercisePlaceholder": "e.g. Cluster, Cluster @ 70%",
     "weight": "Weight (kg)",
     "reps": "Reps",
     "date": "Date",

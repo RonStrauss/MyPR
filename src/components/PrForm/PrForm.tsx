@@ -1,5 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { Loader } from "@/components/Loader/Loader";
+import {
+  CUSTOM_EXERCISE,
+  PRESET_EXERCISES,
+} from "@/constants/exercises";
 import type { PrInput, PrRecord } from "@/types/pr";
 import styles from "./PrForm.module.css";
 
@@ -11,9 +16,29 @@ type Props = {
 
 const defaultDate = () => new Date().toISOString().slice(0, 10);
 
+function resolveExerciseSelection(exercise: string | undefined) {
+  if (!exercise) {
+    return { preset: "", custom: "" };
+  }
+  if ((PRESET_EXERCISES as readonly string[]).includes(exercise)) {
+    return { preset: exercise, custom: "" };
+  }
+  return { preset: CUSTOM_EXERCISE, custom: exercise };
+}
+
 export function PrForm({ initial, onSubmit, onCancel }: Props) {
   const { t } = useTranslation();
-  const [exercise, setExercise] = useState(initial?.exercise ?? "");
+  const initialExercise = useMemo(
+    () => resolveExerciseSelection(initial?.exercise),
+    [initial?.exercise]
+  );
+
+  const [presetExercise, setPresetExercise] = useState(
+    initialExercise.preset
+  );
+  const [customExercise, setCustomExercise] = useState(
+    initialExercise.custom
+  );
   const [weightKg, setWeightKg] = useState(
     initial?.weightKg?.toString() ?? ""
   );
@@ -23,14 +48,22 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isCustom = presetExercise === CUSTOM_EXERCISE;
+
+  function resolvedExercise(): string {
+    if (isCustom) return customExercise.trim();
+    return presetExercise;
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
 
+    const exercise = resolvedExercise();
     const weight = parseFloat(weightKg);
     const repCount = parseInt(reps, 10);
 
-    if (!exercise.trim() || isNaN(weight) || isNaN(repCount)) {
+    if (!exercise || isNaN(weight) || isNaN(repCount)) {
       setError(t("errors.generic"));
       return;
     }
@@ -38,7 +71,7 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
     setSaving(true);
     try {
       await onSubmit({
-        exercise: exercise.trim(),
+        exercise,
         weightKg: weight,
         reps: repCount,
         date,
@@ -58,17 +91,41 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
       </h2>
 
       <div className="form-group">
-        <label className="label" htmlFor="exercise">
+        <label className="label" htmlFor="exercise-preset">
           {t("pr.exercise")}
         </label>
-        <input
-          id="exercise"
-          value={exercise}
-          onChange={(e) => setExercise(e.target.value)}
-          placeholder="סקוואט / Bench Press"
-          required
-        />
+        <select
+          id="exercise-preset"
+          value={presetExercise}
+          onChange={(e) => setPresetExercise(e.target.value)}
+          required={!isCustom}
+        >
+          <option value="" disabled>
+            {t("pr.selectExercise")}
+          </option>
+          {PRESET_EXERCISES.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+          <option value={CUSTOM_EXERCISE}>{t("pr.customExercise")}</option>
+        </select>
       </div>
+
+      {isCustom && (
+        <div className="form-group">
+          <label className="label" htmlFor="exercise-custom">
+            {t("pr.customExerciseName")}
+          </label>
+          <input
+            id="exercise-custom"
+            value={customExercise}
+            onChange={(e) => setCustomExercise(e.target.value)}
+            placeholder={t("pr.customExercisePlaceholder")}
+            required
+          />
+        </div>
+      )}
 
       <div className={styles.row}>
         <div className="form-group">
@@ -138,9 +195,11 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
           {t("pr.cancel")}
         </button>
         <button type="submit" className="btn btn-primary" disabled={saving}>
-          {t("pr.save")}
+          {saving ? t("common.saving") : t("pr.save")}
         </button>
       </div>
+
+      {saving && <Loader inline label={t("common.saving")} />}
     </form>
   );
 }

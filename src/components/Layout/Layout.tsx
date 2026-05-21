@@ -1,10 +1,11 @@
 import { Dumbbell, List, Plus, Settings } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import styles from "./Layout.module.css";
 
 export function Layout() {
   const { t } = useTranslation();
+  const location = useLocation();
 
   return (
     <div className={styles.shell}>
@@ -16,7 +17,9 @@ export function Layout() {
       </header>
 
       <main className={styles.main}>
-        <Outlet />
+        <div key={location.pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
 
       <nav className={styles.bottomNav}>

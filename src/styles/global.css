@@ -183,3 +183,61 @@ select:focus {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+.page-enter {
+  animation: pageEnter 0.35s ease-out both;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.list-item-enter {
+  animation: listItemEnter 0.35s ease-out both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes listItemEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .fade-in,
+  .list-item-enter {
+    animation: none;
+  }
+
+  .btn,
+  input,
+  textarea,
+  select {
+    transition: none;
+  }
+}

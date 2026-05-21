@@ -13,6 +13,18 @@ import {
 import { db } from "@/lib/firebase";
 import type { PrInput, PrRecord } from "@/types/pr";
 
+/** Firestore rejects undefined field values on write */
+function toFirestoreFields(input: PrInput) {
+  const data: Record<string, string | number> = {
+    exercise: input.exercise,
+    weightKg: input.weightKg,
+    reps: input.reps,
+    date: input.date,
+  };
+  if (input.notes) data.notes = input.notes;
+  return data;
+}
+
 function prsCollection(userId: string) {
   return collection(db, "users", userId, "prs");
 }
@@ -48,7 +60,7 @@ export function subscribeToPrs(
 
 export async function addPr(userId: string, input: PrInput) {
   await addDoc(prsCollection(userId), {
-    ...input,
+    ...toFirestoreFields(input),
     createdAt: serverTimestamp(),
   });
 }
@@ -58,7 +70,10 @@ export async function updatePr(
   id: string,
   input: PrInput
 ) {
-  await updateDoc(doc(db, "users", userId, "prs", id), { ...input });
+  await updateDoc(
+    doc(db, "users", userId, "prs", id),
+    toFirestoreFields(input)
+  );
 }
 
 export async function deletePr(userId: string, id: string) {

@@ -1,4 +1,8 @@
 {
+  "common": {
+    "loading": "טוען…",
+    "saving": "שומר…"
+  },
   "app": {
     "name": "MyPR",
     "tagline": "מעקב שיאים אישיים בחדר הכושר"
@@ -31,6 +35,10 @@
     "save": "שמור",
     "cancel": "ביטול",
     "exercise": "תרגיל",
+    "selectExercise": "בחר תרגיל",
+    "customExercise": "תרגיל מותאם…",
+    "customExerciseName": "שם התרגיל",
+    "customExercisePlaceholder": "לדוגמה: Cluster, Cluster @ 70%",
     "weight": "משקל (ק\"ג)",
     "reps": "חזרות",
     "date": "תאריך",
