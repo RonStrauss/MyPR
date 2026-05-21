@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "firebase:deploy-rules": "firebase deploy --only firestore:rules"
   },
   "dependencies": {
     "firebase": "^11.6.0",

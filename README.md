@@ -6,8 +6,9 @@ Track your gym personal records (PRs). Built with React, Firebase Authentication
 
 ## Features
 
-- Email/password and Google sign-in (Firebase Auth)
+- Google sign-in (Firebase Auth)
 - Add, edit, and delete PRs (exercise, weight, reps, date, notes)
+- Preset CrossFit exercises plus custom exercise names
 - Real-time sync via Firestore
 - Mobile-first gym-style UI (dark theme, orange accents)
 - Hebrew default with RTL; switch to English in Settings
@@ -26,12 +27,21 @@ npm install
 
 1. Create a project at [Firebase Console](https://console.firebase.google.com/).
 2. Add a **Web app** and copy the config values.
-3. Enable **Authentication** → Email/Password and **Google** sign-in.
+3. Enable **Authentication** → **Google** sign-in only (disable Email/Password if it was enabled).
 4. Create a **Firestore** database (production mode is fine once rules are deployed).
-5. Deploy security rules from `firestore.rules`:
+5. Install the [Firebase CLI](https://firebase.google.com/docs/cli) and link your project:
 
    ```bash
-   firebase deploy --only firestore:rules
+   npm install -g firebase-tools
+   firebase login
+   cp .firebaserc.example .firebaserc
+   # Edit .firebaserc and set your project ID
+   ```
+
+6. Deploy security rules from `firestore.rules`:
+
+   ```bash
+   npm run firebase:deploy-rules
    ```
 
    Or paste the rules manually in Firestore → Rules.
