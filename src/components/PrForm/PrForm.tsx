@@ -1,44 +1,47 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/Loader/Loader";
 import {
-  CUSTOM_EXERCISE,
-  PRESET_EXERCISES,
-} from "@/constants/exercises";
+  validatePrInput,
+  type ValidationErrorCode,
+} from "@/lib/validation";
+import { PrValidationError } from "@/services/prService";
 import type { PrInput, PrRecord } from "@/types/pr";
 import styles from "./PrForm.module.css";
 
 type Props = {
   initial?: PrRecord;
+  lockedExercise?: string;
+  allowCustomExercise?: boolean;
+  title?: string;
   onSubmit: (data: PrInput) => Promise<void>;
   onCancel: () => void;
 };
 
 const defaultDate = () => new Date().toISOString().slice(0, 10);
 
-function resolveExerciseSelection(exercise: string | undefined) {
-  if (!exercise) {
-    return { preset: "", custom: "" };
-  }
-  if ((PRESET_EXERCISES as readonly string[]).includes(exercise)) {
-    return { preset: exercise, custom: "" };
-  }
-  return { preset: CUSTOM_EXERCISE, custom: exercise };
-}
+const ERROR_I18N: Record<ValidationErrorCode, string> = {
+  exerciseRequired: "errors.exerciseRequired",
+  exerciseTooLong: "errors.exerciseTooLong",
+  weightNegative: "errors.weightNegative",
+  weightInvalid: "errors.weightInvalid",
+  repsInvalid: "errors.repsInvalid",
+  dateInvalid: "errors.dateInvalid",
+  dateYearOutOfRange: "errors.dateYearOutOfRange",
+  notesTooLong: "errors.notesTooLong",
+  notesContainsHtml: "errors.notesContainsHtml",
+};
 
-export function PrForm({ initial, onSubmit, onCancel }: Props) {
+export function PrForm({
+  initial,
+  lockedExercise,
+  allowCustomExercise,
+  title,
+  onSubmit,
+  onCancel,
+}: Props) {
   const { t } = useTranslation();
-  const initialExercise = useMemo(
-    () => resolveExerciseSelection(initial?.exercise),
-    [initial?.exercise]
-  );
-
-  const [presetExercise, setPresetExercise] = useState(
-    initialExercise.preset
-  );
-  const [customExercise, setCustomExercise] = useState(
-    initialExercise.custom
-  );
+  const [customExercise, setCustomExercise] = useState(initial?.exercise ?? "");
   const [weightKg, setWeightKg] = useState(
     initial?.weightKg?.toString() ?? ""
   );
@@ -48,37 +51,43 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isCustom = presetExercise === CUSTOM_EXERCISE;
+  const exerciseName = lockedExercise ?? customExercise.trim();
+  const heading =
+    title ?? (initial ? t("pr.edit") : lockedExercise ?? t("pr.add"));
 
-  function resolvedExercise(): string {
-    if (isCustom) return customExercise.trim();
-    return presetExercise;
+  function resolveErrorMessage(code: ValidationErrorCode): string {
+    return t(ERROR_I18N[code]);
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
 
-    const exercise = resolvedExercise();
     const weight = parseFloat(weightKg);
     const repCount = parseInt(reps, 10);
 
-    if (!exercise || isNaN(weight) || isNaN(repCount)) {
-      setError(t("errors.generic"));
+    const result = validatePrInput({
+      exercise: exerciseName,
+      weightKg: weight,
+      reps: repCount,
+      date,
+      notes: notes.trim() || undefined,
+    });
+
+    if (!result.ok) {
+      setError(resolveErrorMessage(result.code));
       return;
     }
 
     setSaving(true);
     try {
-      await onSubmit({
-        exercise,
-        weightKg: weight,
-        reps: repCount,
-        date,
-        notes: notes.trim() || undefined,
-      });
-    } catch {
-      setError(t("errors.generic"));
+      await onSubmit(result.value);
+    } catch (err) {
+      if (err instanceof PrValidationError) {
+        setError(resolveErrorMessage(err.code));
+      } else {
+        setError(t("errors.generic"));
+      }
     } finally {
       setSaving(false);
     }
@@ -86,33 +95,13 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <h2 className={styles.title}>
-        {initial ? t("pr.edit") : t("pr.add")}
-      </h2>
+      <h2 className={styles.title}>{heading}</h2>
 
-      <div className="form-group">
-        <label className="label" htmlFor="exercise-preset">
-          {t("pr.exercise")}
-        </label>
-        <select
-          id="exercise-preset"
-          value={presetExercise}
-          onChange={(e) => setPresetExercise(e.target.value)}
-          required={!isCustom}
-        >
-          <option value="" disabled>
-            {t("pr.selectExercise")}
-          </option>
-          {PRESET_EXERCISES.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-          <option value={CUSTOM_EXERCISE}>{t("pr.customExercise")}</option>
-        </select>
-      </div>
+      {lockedExercise && (
+        <p className={styles.exerciseLabel}>{lockedExercise}</p>
+      )}
 
-      {isCustom && (
+      {allowCustomExercise && (
         <div className="form-group">
           <label className="label" htmlFor="exercise-custom">
             {t("pr.customExerciseName")}
@@ -122,6 +111,20 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
             value={customExercise}
             onChange={(e) => setCustomExercise(e.target.value)}
             placeholder={t("pr.customExercisePlaceholder")}
+            required
+          />
+        </div>
+      )}
+
+      {initial && !lockedExercise && !allowCustomExercise && (
+        <div className="form-group">
+          <label className="label" htmlFor="exercise-edit">
+            {t("pr.exercise")}
+          </label>
+          <input
+            id="exercise-edit"
+            value={customExercise}
+            onChange={(e) => setCustomExercise(e.target.value)}
             required
           />
         </div>
@@ -165,6 +168,8 @@ export function PrForm({ initial, onSubmit, onCancel }: Props) {
         <input
           id="date"
           type="date"
+          min="1900-01-01"
+          max="2999-12-31"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           required

@@ -7,7 +7,7 @@ import { PrCard } from "@/components/PrCard/PrCard";
 import { PrForm } from "@/components/PrForm/PrForm";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePrs } from "@/hooks/usePrs";
-import { addPr, deletePr, updatePr } from "@/services/prService";
+import { deletePr, updatePr } from "@/services/prService";
 import type { PrInput, PrRecord } from "@/types/pr";
 import styles from "./Home.module.css";
 
@@ -102,17 +102,3 @@ export function HomePage() {
   );
 }
 
-export function AddPrPage() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  async function handleSubmit(data: PrInput) {
-    if (!user) return;
-    await addPr(user.uid, data);
-    navigate("/");
-  }
-
-  return (
-    <PrForm onSubmit={handleSubmit} onCancel={() => navigate("/")} />
-  );
-}

@@ -1,6 +1,7 @@
-import { Dumbbell, List, Plus, Settings } from "lucide-react";
+import { Dumbbell, List, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { SettingsMenu } from "@/components/SettingsMenu/SettingsMenu";
 import styles from "./Layout.module.css";
 
 export function Layout() {
@@ -14,6 +15,7 @@ export function Layout() {
           <img src="/dumbbell.svg" alt="" className={styles.logoIcon} />
           <span className={styles.logoText}>{t("app.name")}</span>
         </div>
+        <SettingsMenu />
       </header>
 
       <main className={styles.main}>
@@ -27,7 +29,7 @@ export function Layout() {
           to="/"
           end
           className={({ isActive }) =>
-            `${styles.navItem} ${isActive ? styles.navItemActive : ""}`
+            `${styles.navItem} ${styles.navItemRecords} ${isActive ? styles.navItemActive : ""}`
           }
         >
           <List />
@@ -42,15 +44,6 @@ export function Layout() {
           <div className={styles.fab}>
             <Plus />
           </div>
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            `${styles.navItem} ${isActive ? styles.navItemActive : ""}`
-          }
-        >
-          <Settings />
-          <span>{t("nav.settings")}</span>
         </NavLink>
       </nav>
     </div>

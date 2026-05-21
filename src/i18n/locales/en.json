@@ -43,6 +43,8 @@
     "reps": "Reps",
     "date": "Date",
     "notes": "Notes (optional)",
+    "pickWorkout": "Choose workout",
+    "oneRm": "1RM",
     "newPr": "New PR!",
     "confirmDelete": "Delete this record?"
   },
@@ -58,7 +60,16 @@
     "generic": "Something went wrong. Try again.",
     "authFailed": "Authentication failed",
     "passwordMismatch": "Passwords do not match",
-    "firebaseNotConfigured": "Firebase is not configured — see README"
+    "firebaseNotConfigured": "Firebase is not configured — see README",
+    "exerciseRequired": "Enter an exercise name.",
+    "exerciseTooLong": "Exercise name is too long.",
+    "weightNegative": "Weight cannot be negative.",
+    "weightInvalid": "Enter a valid weight.",
+    "repsInvalid": "Reps must be at least 1.",
+    "dateInvalid": "Enter a valid date.",
+    "dateYearOutOfRange": "Year must be between 1900 and 2999.",
+    "notesTooLong": "Notes are too long.",
+    "notesContainsHtml": "Notes cannot contain HTML."
   },
   "units": {
     "kg": "kg",

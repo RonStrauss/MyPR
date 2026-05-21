@@ -1,0 +1,120 @@
+.root {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  transition: color 0.15s, background 0.15s;
+}
+
+.trigger:hover,
+.trigger[aria-expanded="true"] {
+  color: var(--accent);
+  background: rgba(255, 92, 26, 0.12);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  width: min(280px, calc(100vw - 2rem));
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  z-index: 30;
+  animation: menuEnter 0.2s ease-out both;
+}
+
+@keyframes menuEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menuHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.langToggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  direction: ltr;
+  margin-bottom: 0.75rem;
+}
+
+.langBtn {
+  padding: 0.6rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.langBtnActive {
+  border-color: var(--accent);
+  background: rgba(255, 92, 26, 0.15);
+  color: var(--accent);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.75rem 0;
+}
+
+.email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  word-break: break-all;
+  margin-bottom: 0.75rem;
+}
+
+.signOutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  font-weight: 600;
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+
+.signOutBtn:hover {
+  border-color: var(--accent);
+}
+
+.hint {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

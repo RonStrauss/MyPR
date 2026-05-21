@@ -8,10 +8,11 @@ Track your gym personal records (PRs). Built with React, Firebase Authentication
 
 - Google sign-in (Firebase Auth)
 - Add, edit, and delete PRs (exercise, weight, reps, date, notes)
+- Pick a workout from the add flow (shows estimated 1RM per lift when logged)
 - Preset CrossFit exercises plus custom exercise names
-- Real-time sync via Firestore
+- Real-time sync via Firestore with server-side validation rules
 - Mobile-first gym-style UI (dark theme, orange accents)
-- Hebrew default with RTL; switch to English in Settings
+- Hebrew default with RTL; language and account in the header settings menu
 
 ## Quick start
 
@@ -67,7 +68,15 @@ npm run dev
 
 Open the URL shown in the terminal (usually `http://localhost:5173`).
 
-### 5. Build for production
+### 5. Tests
+
+```bash
+npm test
+```
+
+CI runs on every push and pull request to `main` / `master` (see `.github/workflows/ci.yml`). Enable **branch protection** on GitHub so merges require the CI check to pass.
+
+### 6. Build for production
 
 ```bash
 npm run build

@@ -53,12 +53,17 @@
   width: 100%;
   max-width: 480px;
   height: var(--nav-height);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: stretch;
   background: rgba(22, 22, 26, 0.95);
   backdrop-filter: blur(16px);
   border-top: 1px solid var(--border);
   z-index: 20;
+}
+
+.navItemRecords {
+  justify-self: start;
 }
 
 .navItem {
@@ -84,7 +89,7 @@
 }
 
 .navItemFab {
-  flex: 1.2;
+  justify-self: center;
   color: var(--accent);
 }
 

@@ -43,6 +43,8 @@
     "reps": "חזרות",
     "date": "תאריך",
     "notes": "הערות (אופציונלי)",
+    "pickWorkout": "בחר אימון",
+    "oneRm": "1RM",
     "newPr": "שיא חדש!",
     "confirmDelete": "למחוק את השיא הזה?"
   },
@@ -58,7 +60,16 @@
     "generic": "משהו השתבש. נסה שוב.",
     "authFailed": "ההתחברות נכשלה",
     "passwordMismatch": "הסיסמאות לא תואמות",
-    "firebaseNotConfigured": "Firebase לא מוגדר — ראה README"
+    "firebaseNotConfigured": "Firebase לא מוגדר — ראה README",
+    "exerciseRequired": "הזן שם תרגיל.",
+    "exerciseTooLong": "שם התרגיל ארוך מדי.",
+    "weightNegative": "משקל לא יכול להיות שלילי.",
+    "weightInvalid": "הזן משקל תקין.",
+    "repsInvalid": "מספר החזרות חייב להיות לפחות 1.",
+    "dateInvalid": "הזן תאריך תקין.",
+    "dateYearOutOfRange": "השנה חייבת להיות בין 1900 ל-2999.",
+    "notesTooLong": "ההערות ארוכות מדי.",
+    "notesContainsHtml": "ההערות לא יכולות להכיל HTML."
   },
   "units": {
     "kg": "ק\"ג",

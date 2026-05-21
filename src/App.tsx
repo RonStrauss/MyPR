@@ -1,11 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/Loader/Loader";
 import { AuthLayout, Layout } from "@/components/Layout/Layout";
-import { useAuth } from "@/contexts/AuthContext";
-import { AddPrPage, HomePage } from "@/pages/Home/HomePage";
+import { AddPrPage } from "@/pages/Add/AddPrPage";
+import { WorkoutPickerPage } from "@/pages/Add/WorkoutPickerPage";
 import { AuthPage } from "@/pages/Auth/AuthPage";
-import { SettingsPage } from "@/pages/Settings/SettingsPage";
-import { useTranslation } from "react-i18next";
+import { HomePage } from "@/pages/Home/HomePage";
+import { useAuth } from "@/contexts/AuthContext";
 
 function LoadingScreen() {
   const { t } = useTranslation();
@@ -32,10 +33,11 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="add" element={<AddPrPage />} />
-        <Route path="settings" element={<SettingsPage />} />
+        <Route path="add" element={<WorkoutPickerPage />} />
+        <Route path="add/:exercise" element={<AddPrPage />} />
       </Route>
       <Route path="/auth" element={<Navigate to="/" replace />} />
+      <Route path="/settings" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

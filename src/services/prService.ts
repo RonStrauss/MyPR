@@ -11,7 +11,24 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { validatePrInput, type ValidationErrorCode } from "@/lib/validation";
 import type { PrInput, PrRecord } from "@/types/pr";
+
+export class PrValidationError extends Error {
+  code: ValidationErrorCode;
+
+  constructor(code: ValidationErrorCode) {
+    super(code);
+    this.name = "PrValidationError";
+    this.code = code;
+  }
+}
+
+function assertValidInput(input: PrInput): PrInput {
+  const result = validatePrInput(input);
+  if (!result.ok) throw new PrValidationError(result.code);
+  return result.value;
+}
 
 /** Firestore rejects undefined field values on write */
 function toFirestoreFields(input: PrInput) {
@@ -59,8 +76,9 @@ export function subscribeToPrs(
 }
 
 export async function addPr(userId: string, input: PrInput) {
+  const valid = assertValidInput(input);
   await addDoc(prsCollection(userId), {
-    ...toFirestoreFields(input),
+    ...toFirestoreFields(valid),
     createdAt: serverTimestamp(),
   });
 }
@@ -70,9 +88,10 @@ export async function updatePr(
   id: string,
   input: PrInput
 ) {
+  const valid = assertValidInput(input);
   await updateDoc(
     doc(db, "users", userId, "prs", id),
-    toFirestoreFields(input)
+    toFirestoreFields(valid)
   );
 }
 

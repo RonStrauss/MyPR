@@ -14,4 +14,8 @@ export default defineConfig({
       "@": path.resolve(rootDir, "src"),
     },
   },
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.ts"],
+  },
 });
