@@ -48,7 +48,12 @@
     "oneRm": "1RM",
     "newPr": "New PR!",
     "confirmDelete": "Delete this record?",
-    "percentagesTitle": "Percentages of this weight"
+    "percentagesTitle": "Percentages of this weight",
+    "calculator": "Calc",
+    "visibility": "Visibility",
+    "visibilityPublicHint": "Others can view this PR",
+    "visibilityPrivateHint": "Only you can see this PR",
+    "publicBadge": "Public PR"
   },
   "settings": {
     "title": "Settings",
@@ -104,6 +109,7 @@
   "pwa": {
     "updateMessage": "MyPR has been updated — refresh to get all this new goodness ✨",
     "refresh": "Refresh",
+    "updating": "Updating…",
     "later": "Later"
   },
   "errors": {

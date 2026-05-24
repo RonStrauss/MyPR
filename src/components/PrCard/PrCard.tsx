@@ -1,15 +1,23 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Calculator, Globe, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { PrRecord } from "@/types/pr";
 import styles from "./PrCard.module.css";
 
 type Props = {
   record: PrRecord;
+  isBestPr: boolean;
   onEdit: (record: PrRecord) => void;
   onDelete: (record: PrRecord) => void;
+  onCalculator: (record: PrRecord) => void;
 };
 
-export function PrCard({ record, onEdit, onDelete }: Props) {
+export function PrCard({
+  record,
+  isBestPr,
+  onEdit,
+  onDelete,
+  onCalculator,
+}: Props) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language === "he" ? "he-IL" : "en-US";
   const formattedDate = new Date(record.date).toLocaleDateString(locale, {
@@ -22,7 +30,14 @@ export function PrCard({ record, onEdit, onDelete }: Props) {
     <article className={`card ${styles.card}`}>
       <div className={styles.top}>
         <h3 className={styles.exercise}>{record.exercise}</h3>
-        <span className={styles.badge}>PR</span>
+        <div className={styles.badges}>
+          {record.isPublic && (
+            <span className={styles.publicBadge} title={t("pr.publicBadge")}>
+              <Globe size={12} />
+            </span>
+          )}
+          {isBestPr && <span className={styles.badge}>PR</span>}
+        </div>
       </div>
       <div className={styles.stats}>
         <div className={styles.stat}>
@@ -37,6 +52,15 @@ export function PrCard({ record, onEdit, onDelete }: Props) {
       <p className={styles.meta}>{formattedDate}</p>
       {record.notes && <p className={styles.notes}>{record.notes}</p>}
       <div className={styles.actions}>
+        <button
+          type="button"
+          className={`btn btn-secondary ${styles.actionBtn}`}
+          onClick={() => onCalculator(record)}
+          aria-label={t("pr.calculator")}
+        >
+          <Calculator size={14} />
+          {t("pr.calculator")}
+        </button>
         <button
           type="button"
           className={`btn btn-secondary ${styles.actionBtn}`}

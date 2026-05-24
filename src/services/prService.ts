@@ -32,11 +32,12 @@ function assertValidInput(input: PrInput): PrInput {
 
 /** Firestore rejects undefined field values on write */
 function toFirestoreFields(input: PrInput) {
-  const data: Record<string, string | number> = {
+  const data: Record<string, string | number | boolean> = {
     exercise: input.exercise,
     weightKg: input.weightKg,
     reps: input.reps,
     date: input.date,
+    isPublic: input.isPublic === true,
   };
   if (input.notes) data.notes = input.notes;
   return data;
@@ -64,6 +65,7 @@ export function subscribeToPrs(
           reps: data.reps as number,
           date: data.date as string,
           notes: (data.notes as string | undefined) ?? undefined,
+          isPublic: data.isPublic === true,
           createdAt: (data.createdAt as { seconds?: number })?.seconds
             ? (data.createdAt as { seconds: number }).seconds * 1000
             : Date.now(),

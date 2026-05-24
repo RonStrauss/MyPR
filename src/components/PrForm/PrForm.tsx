@@ -2,11 +2,6 @@ import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/Loader/Loader";
 import {
-  isValidBaseWeightKg,
-  TRAINING_PERCENTAGES,
-  weightAtPercent,
-} from "@/lib/weightPercentages";
-import {
   validatePrInput,
   type ValidationErrorCode,
 } from "@/lib/validation";
@@ -53,15 +48,13 @@ export function PrForm({
   const [reps, setReps] = useState(initial?.reps?.toString() ?? "");
   const [date, setDate] = useState(initial?.date ?? defaultDate());
   const [notes, setNotes] = useState(initial?.notes ?? "");
+  const [isPublic, setIsPublic] = useState(initial?.isPublic ?? false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const exerciseName = lockedExercise ?? customExercise.trim();
   const heading =
     title ?? (initial ? t("pr.edit") : lockedExercise ?? t("pr.add"));
-
-  const baseWeight = parseFloat(weightKg);
-  const showPercentages = isValidBaseWeightKg(baseWeight);
 
   function resolveErrorMessage(code: ValidationErrorCode): string {
     return t(ERROR_I18N[code]);
@@ -80,6 +73,7 @@ export function PrForm({
       reps: repCount,
       date,
       notes: notes.trim() || undefined,
+      isPublic,
     });
 
     if (!result.ok) {
@@ -196,6 +190,24 @@ export function PrForm({
         />
       </div>
 
+      <div className={styles.visibility}>
+        <div className={styles.visibilityText}>
+          <span className={styles.visibilityLabel}>{t("pr.visibility")}</span>
+          <span className={styles.visibilityHint}>
+            {isPublic ? t("pr.visibilityPublicHint") : t("pr.visibilityPrivateHint")}
+          </span>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isPublic}
+          className={`${styles.toggle} ${isPublic ? styles.toggleOn : ""}`}
+          onClick={() => setIsPublic((v) => !v)}
+        >
+          <span className={styles.toggleThumb} />
+        </button>
+      </div>
+
       {error && <p className="error-text">{error}</p>}
 
       <div className={styles.actions}>
@@ -213,23 +225,6 @@ export function PrForm({
       </div>
 
       {saving && <Loader inline label={t("common.saving")} />}
-
-      {showPercentages && (
-        <section className={styles.percentages} aria-label={t("pr.percentagesTitle")}>
-          <h3 className={styles.percentagesTitle}>{t("pr.percentagesTitle")}</h3>
-          <div className={styles.percentGrid}>
-            {TRAINING_PERCENTAGES.map((percent) => (
-              <div key={percent} className={styles.percentCell}>
-                <span className={styles.percentLabel}>{percent}%</span>
-                <span className={styles.percentValue}>
-                  {weightAtPercent(baseWeight, percent)}
-                  <span className={styles.percentUnit}>{t("units.kg")}</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
     </form>
   );
 }

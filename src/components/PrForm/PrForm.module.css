@@ -35,55 +35,64 @@
   margin-bottom: 1rem;
 }
 
-.percentages {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--border);
-}
-
-.percentagesTitle {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-}
-
-.percentGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
-}
-
-.percentCell {
+.visibility {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.15rem;
-  padding: 0.6rem 0.35rem;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
-.percentLabel {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--text-muted);
+.visibilityText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.percentValue {
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  line-height: 1;
-  color: var(--accent);
-}
-
-.percentUnit {
-  font-family: var(--font-body);
-  font-size: 0.6rem;
+.visibilityLabel {
+  font-size: 0.875rem;
   font-weight: 600;
+}
+
+.visibilityHint {
+  font-size: 0.75rem;
   color: var(--text-muted);
-  margin-inline-start: 0.1rem;
+}
+
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+
+.toggleOn {
+  background: var(--accent);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  inset-inline-start: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(20px);
+}
+
+[dir="rtl"] .toggleOn .toggleThumb {
+  transform: translateX(-20px);
 }

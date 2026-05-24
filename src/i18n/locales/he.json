@@ -48,7 +48,12 @@
     "oneRm": "1RM",
     "newPr": "שיא חדש!",
     "confirmDelete": "למחוק את השיא הזה?",
-    "percentagesTitle": "אחוזים מהמשקל הזה"
+    "percentagesTitle": "אחוזים מהמשקל הזה",
+    "calculator": "מחשבון",
+    "visibility": "נראות",
+    "visibilityPublicHint": "אחרים יכולים לראות את השיא",
+    "visibilityPrivateHint": "רק אתה רואה את השיא",
+    "publicBadge": "שיא ציבורי"
   },
   "settings": {
     "title": "הגדרות",
@@ -106,6 +111,7 @@
   "pwa": {
     "updateMessage": "MyPR התעדכן — רעננו כדי לקבל את כל הטוב הזה ✨",
     "refresh": "רענון",
+    "updating": "מתעדכן…",
     "later": "אחר כך"
   },
   "errors": {

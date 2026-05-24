@@ -29,8 +29,14 @@
   line-height: 1.1;
 }
 
-.badge {
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   flex-shrink: 0;
+}
+
+.badge {
   padding: 0.2rem 0.5rem;
   font-size: 0.65rem;
   font-weight: 800;
@@ -39,6 +45,18 @@
   background: var(--accent);
   color: #fff;
   border-radius: 4px;
+}
+
+.publicBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(34, 197, 94, 0.35);
 }
 
 .stats {

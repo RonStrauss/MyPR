@@ -23,7 +23,7 @@ service cloud.firestore {
     }
 
     function isValidPr(data) {
-      return data.keys().hasAll(['exercise', 'weightKg', 'reps', 'date'])
+      return data.keys().hasAll(['exercise', 'weightKg', 'reps', 'date', 'isPublic'])
         && data.exercise is string
         && data.exercise.size() > 0
         && data.exercise.size() <= 120
@@ -32,11 +32,13 @@ service cloud.firestore {
         && data.reps is int
         && data.reps > 0
         && isValidDate(data.date)
+        && data.isPublic is bool
         && notesValid(data);
     }
 
     match /users/{userId}/prs/{prId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null
+        && (request.auth.uid == userId || resource.data.isPublic == true);
 
       allow create: if request.auth != null
         && request.auth.uid == userId

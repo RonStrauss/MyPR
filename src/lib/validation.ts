@@ -53,6 +53,7 @@ export function validatePrInput(raw: {
   reps: number;
   date: string;
   notes?: string;
+  isPublic?: boolean;
 }): ValidationResult {
   const exercise = raw.exercise.trim();
   if (!exercise) return { ok: false, code: "exerciseRequired" };
@@ -89,6 +90,7 @@ export function validatePrInput(raw: {
       reps: raw.reps,
       date: raw.date,
       notes,
+      isPublic: raw.isPublic === true,
     },
   };
 }

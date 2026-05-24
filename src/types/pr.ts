@@ -5,6 +5,7 @@ export type PrRecord = {
   reps: number;
   date: string;
   notes?: string;
+  isPublic: boolean;
   createdAt: number;
 };
 
