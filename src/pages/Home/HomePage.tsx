@@ -32,8 +32,6 @@ export function HomePage() {
 		navigate(location.pathname, { replace: true, state: null });
 	}, [location.state, location.pathname, navigate, t]);
 
-	const totalWeight = records.reduce((sum, r) => sum + r.weightKg, 0);
-
 	async function handleDelete(record: PrRecord) {
 		if (!user || !confirm(t('pr.confirmDelete'))) return;
 		await deletePr(user.uid, record.id);
