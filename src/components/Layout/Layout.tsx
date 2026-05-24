@@ -12,7 +12,7 @@ export function Layout() {
 		<div className={styles.shell}>
 			<header className={styles.header}>
 				<div className={styles.logo}>
-					<img src='/dumbbell.svg' alt='' className={styles.logoIcon} />
+					<img src='/dumbbell-transparent-bg.svg' alt='' className={styles.logoIcon} />
 					<span className={styles.logoText}>{t('app.name')}</span>
 				</div>
 				<SettingsMenu />
@@ -50,7 +50,7 @@ export function AuthLayout() {
 		<div className={styles.shell} style={{ paddingBottom: 0 }}>
 			<header className={styles.header}>
 				<div className={styles.logo}>
-					<img src='/dumbbell.svg' alt='' className={styles.logoIcon} />
+					<img src='/dumbbell-transparent-bg.svg' alt='' className={styles.logoIcon} />
 					<span className={styles.logoText}>{t('app.name')}</span>
 				</div>
 			</header>
