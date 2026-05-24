@@ -1,9 +1,13 @@
-import { Languages, LogOut, Settings } from "lucide-react";
+import { Languages, LogOut, PartyPopper, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { changeLanguage, type Lang } from "@/i18n";
 import { isFirebaseConfigured } from "@/lib/firebase";
+import {
+  getCelebrationsEnabled,
+  setCelebrationsEnabled,
+} from "@/lib/preferences";
 import { APP_VERSION } from "@/version";
 import styles from "./SettingsMenu.module.css";
 
@@ -16,6 +20,9 @@ export function SettingsMenu() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [celebrationsEnabled, setCelebrationsEnabledState] = useState(
+    getCelebrationsEnabled
+  );
   const rootRef = useRef<HTMLDivElement>(null);
   const currentLang = i18n.language as Lang;
 
@@ -76,6 +83,36 @@ export function SettingsMenu() {
               onClick={() => selectLang("en")}
             >
               {t("settings.english")}
+            </button>
+          </div>
+
+          <div className={styles.divider} />
+
+          <p className={styles.menuHeading}>
+            <PartyPopper size={14} />
+            {t("settings.preferences")}
+          </p>
+          <div className={styles.settingRow}>
+            <div>
+              <span className={styles.settingLabel}>
+                {t("settings.celebrations")}
+              </span>
+              <span className={styles.settingHint}>
+                {t("settings.celebrationsHint")}
+              </span>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={celebrationsEnabled}
+              className={`${styles.toggle} ${celebrationsEnabled ? styles.toggleOn : ""}`}
+              onClick={() => {
+                const next = !celebrationsEnabled;
+                setCelebrationsEnabled(next);
+                setCelebrationsEnabledState(next);
+              }}
+            >
+              <span className={styles.toggleThumb} />
             </button>
           </div>
 

@@ -1,0 +1,103 @@
+.wrap {
+  margin-bottom: 1rem;
+}
+
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.toggleBtn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.toggleBtnActive {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(255, 92, 26, 0.1);
+}
+
+.badge {
+  min-width: 1.25rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+}
+
+.panel {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.resultCount {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.field {
+  margin-bottom: 0;
+}
+
+.dateRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.checks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.checkLabel input {
+  width: auto;
+  accent-color: var(--accent);
+}

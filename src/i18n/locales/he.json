@@ -63,7 +63,29 @@
     "account": "חשבון",
     "version": "גרסה",
     "userId": "מזהה משתמש",
-    "firebaseHint": "הגדר את משתני הסביבה של Firebase בקובץ .env"
+    "firebaseHint": "הגדר את משתני הסביבה של Firebase בקובץ .env",
+    "preferences": "העדפות",
+    "celebrations": "אנימציות חגיגה",
+    "celebrationsHint": "קונפטי כשמתעדים שיא חדש"
+  },
+  "filters": {
+    "title": "סינון",
+    "shown": "מוצגים",
+    "showing": "{{count}} מתוך {{total}}",
+    "clear": "נקה סינון",
+    "noResults": "אין שיאים שמתאימים לסינון.",
+    "group": "קבוצת תרגילים",
+    "allGroups": "כל הקבוצות",
+    "exercise": "תרגיל",
+    "allExercises": "כל התרגילים",
+    "dateFrom": "מ־",
+    "dateTo": "עד",
+    "visibility": "נראות",
+    "visibilityAll": "ציבורי ופרטי",
+    "visibilityPublic": "ציבורי בלבד",
+    "visibilityPrivate": "פרטי בלבד",
+    "onlyHighest": "רק השיא הגבוה לכל תרגיל",
+    "withComments": "רק עם הערות"
   },
   "stats": {
     "title": "סטטיסטיקה",

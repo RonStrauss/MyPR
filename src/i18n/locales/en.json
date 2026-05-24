@@ -63,7 +63,29 @@
     "account": "Account",
     "version": "Version",
     "userId": "User ID",
-    "firebaseHint": "Set Firebase environment variables in a .env file"
+    "firebaseHint": "Set Firebase environment variables in a .env file",
+    "preferences": "Preferences",
+    "celebrations": "Celebration animations",
+    "celebrationsHint": "Confetti when you log a new PR"
+  },
+  "filters": {
+    "title": "Filter",
+    "shown": "Shown",
+    "showing": "{{count}} of {{total}}",
+    "clear": "Clear filters",
+    "noResults": "No PRs match these filters.",
+    "group": "Exercise group",
+    "allGroups": "All groups",
+    "exercise": "Exercise",
+    "allExercises": "All exercises",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "visibility": "Visibility",
+    "visibilityAll": "Public & private",
+    "visibilityPublic": "Public only",
+    "visibilityPrivate": "Private only",
+    "onlyHighest": "Highest PR per exercise only",
+    "withComments": "With comments only"
   },
   "stats": {
     "title": "Statistics",
