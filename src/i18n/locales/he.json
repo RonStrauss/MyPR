@@ -47,7 +47,8 @@
     "pickWorkout": "בחר אימון",
     "oneRm": "1RM",
     "newPr": "שיא חדש!",
-    "confirmDelete": "למחוק את השיא הזה?"
+    "confirmDelete": "למחוק את השיא הזה?",
+    "percentagesTitle": "אחוזים מהמשקל הזה"
   },
   "settings": {
     "title": "הגדרות",

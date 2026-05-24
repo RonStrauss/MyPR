@@ -2,6 +2,11 @@ import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/Loader/Loader";
 import {
+  isValidBaseWeightKg,
+  TRAINING_PERCENTAGES,
+  weightAtPercent,
+} from "@/lib/weightPercentages";
+import {
   validatePrInput,
   type ValidationErrorCode,
 } from "@/lib/validation";
@@ -54,6 +59,9 @@ export function PrForm({
   const exerciseName = lockedExercise ?? customExercise.trim();
   const heading =
     title ?? (initial ? t("pr.edit") : lockedExercise ?? t("pr.add"));
+
+  const baseWeight = parseFloat(weightKg);
+  const showPercentages = isValidBaseWeightKg(baseWeight);
 
   function resolveErrorMessage(code: ValidationErrorCode): string {
     return t(ERROR_I18N[code]);
@@ -205,6 +213,23 @@ export function PrForm({
       </div>
 
       {saving && <Loader inline label={t("common.saving")} />}
+
+      {showPercentages && (
+        <section className={styles.percentages} aria-label={t("pr.percentagesTitle")}>
+          <h3 className={styles.percentagesTitle}>{t("pr.percentagesTitle")}</h3>
+          <div className={styles.percentGrid}>
+            {TRAINING_PERCENTAGES.map((percent) => (
+              <div key={percent} className={styles.percentCell}>
+                <span className={styles.percentLabel}>{percent}%</span>
+                <span className={styles.percentValue}>
+                  {weightAtPercent(baseWeight, percent)}
+                  <span className={styles.percentUnit}>{t("units.kg")}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </form>
   );
 }

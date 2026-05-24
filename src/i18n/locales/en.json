@@ -47,7 +47,8 @@
     "pickWorkout": "Choose workout",
     "oneRm": "1RM",
     "newPr": "New PR!",
-    "confirmDelete": "Delete this record?"
+    "confirmDelete": "Delete this record?",
+    "percentagesTitle": "Percentages of this weight"
   },
   "settings": {
     "title": "Settings",
