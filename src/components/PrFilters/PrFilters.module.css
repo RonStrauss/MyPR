@@ -1,5 +1,8 @@
 .wrap {
+  position: relative;
+  display: inline-block;
   margin-bottom: 1rem;
+  z-index: 25;
 }
 
 .toggleBtn {
@@ -39,14 +42,35 @@
 }
 
 .panel {
-  margin-top: 0.75rem;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline-start: 0;
+  z-index: 30;
+  width: min(320px, calc(100vw - 2rem));
+  max-height: min(70dvh, 520px);
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 1rem;
+  box-sizing: border-box;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  animation: panelEnter 0.2s ease-out both;
+}
+
+@keyframes panelEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .panelHeader {
@@ -73,31 +97,55 @@
 
 .field {
   margin-bottom: 0;
+  min-width: 0;
 }
 
 .dateRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.panel input[type="date"],
+.panel select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.panel input[type="date"] {
+  padding: 0.65rem 0.5rem;
+  font-size: 0.85rem;
 }
 
 .checks {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
   padding-top: 0.25rem;
 }
 
 .checkLabel {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
+  padding: 0.55rem 0.35rem;
+  border-radius: var(--radius);
+  transition: background 0.15s;
 }
 
-.checkLabel input {
-  width: auto;
+.checkLabel:hover {
+  background: var(--bg-elevated);
+}
+
+.checkbox {
+  width: 1.35rem;
+  height: 1.35rem;
+  min-width: 1.35rem;
+  margin: 0;
+  flex-shrink: 0;
   accent-color: var(--accent);
+  cursor: pointer;
 }

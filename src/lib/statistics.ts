@@ -84,6 +84,16 @@ export function getExercisesWithData(records: PrRecord[]): string[] {
   return [...presetOrdered, ...custom];
 }
 
+/** Share of preset exercises with at least one logged PR */
+export function computeExerciseCoverage(records: PrRecord[]) {
+  const logged = new Set(records.map((r) => r.exercise));
+  const loggedPresets = PRESET_EXERCISES.filter((e) => logged.has(e)).length;
+  const total = PRESET_EXERCISES.length;
+  const percent =
+    total > 0 ? Math.round((loggedPresets / total) * 100) : 0;
+  return { loggedPresets, total, percent };
+}
+
 export function getProgressSeries(
   records: PrRecord[],
   exercise: string

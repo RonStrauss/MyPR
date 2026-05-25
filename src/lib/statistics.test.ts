@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  computeExerciseCoverage,
   computeGroupStats,
   computeOverview,
   getImprovement,
   getProgressSeries,
 } from "./statistics";
+import { PRESET_EXERCISES } from "@/constants/exercises";
 import type { PrRecord } from "@/types/pr";
 
 function record(
@@ -59,6 +61,20 @@ describe("getImprovement", () => {
       { date: "2024-06-01", estimated1Rm: 110, weightKg: 110, reps: 1 },
     ]);
     expect(imp).toEqual({ delta: 10, percent: 10 });
+  });
+});
+
+describe("computeExerciseCoverage", () => {
+  it("returns percent of preset exercises logged", () => {
+    const coverage = computeExerciseCoverage([
+      record({ exercise: "Back Squat", weightKg: 100, reps: 1 }),
+      record({ exercise: "Deadlift", weightKg: 120, reps: 1, id: "2" }),
+    ]);
+    expect(coverage.loggedPresets).toBe(2);
+    expect(coverage.total).toBe(PRESET_EXERCISES.length);
+    expect(coverage.percent).toBe(
+      Math.round((2 / PRESET_EXERCISES.length) * 100)
+    );
   });
 });
 

@@ -1,4 +1,4 @@
-import { Calculator, Globe, Pencil, Trash2 } from "lucide-react";
+import { Globe, Percent, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { PrRecord } from "@/types/pr";
 import styles from "./PrCard.module.css";
@@ -56,10 +56,10 @@ export function PrCard({
           type="button"
           className={`btn btn-secondary ${styles.actionBtn}`}
           onClick={() => onCalculator(record)}
-          aria-label={t("pr.calculator")}
+          aria-label={t("pr.percentages")}
         >
-          <Calculator size={14} />
-          {t("pr.calculator")}
+          <Percent size={14} />
+          {t("pr.percentages")}
         </button>
         <button
           type="button"

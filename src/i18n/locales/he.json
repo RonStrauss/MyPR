@@ -1,7 +1,8 @@
 {
   "common": {
     "loading": "טוען…",
-    "saving": "שומר…"
+    "saving": "שומר…",
+    "close": "סגור"
   },
   "app": {
     "name": "MyPR",
@@ -49,7 +50,7 @@
     "newPr": "שיא חדש!",
     "confirmDelete": "למחוק את השיא הזה?",
     "percentagesTitle": "אחוזים מהמשקל הזה",
-    "calculator": "מחשבון",
+    "percentages": "אחוזים",
     "visibility": "נראות",
     "visibilityPublicHint": "אחרים יכולים לראות את השיא",
     "visibilityPrivateHint": "רק אתה רואה את השיא",
@@ -92,14 +93,16 @@
     "empty": "תעד כמה שיאים כדי לראות סטטיסטיקה.",
     "totalPrs": "סה\"כ שיאים",
     "exercises": "תרגילים",
-    "best1Rm": "1RM מקסימלי",
+    "coverage": "תרגילים עם שיאים",
+    "coverageFraction": "{{logged}} / {{total}}",
     "last30": "30 יום אחרונים",
     "progress": "התקדמות לאורך זמן",
     "chartUnit": "1RM משוער (ק\"ג)",
     "noDataForExercise": "אין רשומות לתרגיל הזה עדיין.",
     "improvement": "+{{delta}} ק\"ג ({{percent}}%) מאז הרשומה הראשונה",
-    "groupAverages": "ממוצעים לפי קבוצה",
-    "groupHint": "ממוצע 1RM משוער ומשקל עבודה לכל משפחת תנועות.",
+    "groupBests": "הטוב ביותר לפי קבוצה",
+    "best": "שיא",
+    "showList": "הצג רשימה",
     "entries": "רשומות",
     "noGroupData": "אין עדיין שיאים בקבוצה הזו.",
     "avg1Rm": "ממוצע 1RM",

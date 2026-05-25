@@ -24,15 +24,19 @@ export const DEFAULT_PR_FILTERS: PrFiltersState = {
 };
 
 export function hasActiveFilters(filters: PrFiltersState): boolean {
-  return (
-    filters.groupId !== "" ||
-    filters.exercise !== "" ||
-    filters.dateFrom !== "" ||
-    filters.dateTo !== "" ||
-    filters.onlyHighest ||
-    filters.visibility !== "all" ||
-    filters.withCommentsOnly
-  );
+  return countActiveFilters(filters) > 0;
+}
+
+export function countActiveFilters(filters: PrFiltersState): number {
+  let count = 0;
+  if (filters.groupId !== "") count++;
+  if (filters.exercise !== "") count++;
+  if (filters.dateFrom !== "") count++;
+  if (filters.dateTo !== "") count++;
+  if (filters.onlyHighest) count++;
+  if (filters.visibility !== "all") count++;
+  if (filters.withCommentsOnly) count++;
+  return count;
 }
 
 function groupExercises(groupId: string): string[] | null {

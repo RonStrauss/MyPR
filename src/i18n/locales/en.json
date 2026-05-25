@@ -1,7 +1,8 @@
 {
   "common": {
     "loading": "Loading…",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "close": "Close"
   },
   "app": {
     "name": "MyPR",
@@ -49,7 +50,7 @@
     "newPr": "New PR!",
     "confirmDelete": "Delete this record?",
     "percentagesTitle": "Percentages of this weight",
-    "calculator": "Calc",
+    "percentages": "Percentages",
     "visibility": "Visibility",
     "visibilityPublicHint": "Others can view this PR",
     "visibilityPrivateHint": "Only you can see this PR",
@@ -92,14 +93,16 @@
     "empty": "Log some PRs to see your stats.",
     "totalPrs": "Total PRs",
     "exercises": "Exercises",
-    "best1Rm": "Best 1RM",
+    "coverage": "Exercises logged",
+    "coverageFraction": "{{logged}} / {{total}}",
     "last30": "Last 30 days",
     "progress": "Progress over time",
     "chartUnit": "Estimated 1RM (kg)",
     "noDataForExercise": "No entries for this exercise yet.",
     "improvement": "+{{delta}} kg ({{percent}}%) since first entry",
-    "groupAverages": "Group averages",
-    "groupHint": "Average estimated 1RM and working weight per movement family.",
+    "groupBests": "Best by group",
+    "best": "Best",
+    "showList": "Show list",
     "entries": "entries",
     "noGroupData": "No lifts logged in this group yet.",
     "avg1Rm": "Avg 1RM",

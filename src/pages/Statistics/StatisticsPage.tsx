@@ -1,12 +1,19 @@
 import { TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Loader } from "@/components/Loader/Loader";
 import { ProgressChart } from "@/components/ProgressChart/ProgressChart";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePrs } from "@/hooks/usePrs";
 import {
+  filtersForGroupBest,
+  filtersForGroupList,
+  homeNavState,
+} from "@/lib/navigation";
+import {
   EXERCISE_GROUPS,
+  computeExerciseCoverage,
   computeGroupStats,
   computeOverview,
   getExercisesWithData,
@@ -19,6 +26,7 @@ export function StatisticsPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { records, loading, error } = usePrs(user?.uid);
+  const navigate = useNavigate();
 
   const exercises = useMemo(() => getExercisesWithData(records), [records]);
   const [selected, setSelected] = useState("");
@@ -30,10 +38,22 @@ export function StatisticsPage() {
   );
   const improvement = useMemo(() => getImprovement(series), [series]);
   const overview = useMemo(() => computeOverview(records), [records]);
+  const coverage = useMemo(() => computeExerciseCoverage(records), [records]);
   const groupStats = useMemo(
     () => EXERCISE_GROUPS.map((g) => computeGroupStats(records, g)),
     [records]
   );
+
+  function viewGroupList(groupId: string) {
+    navigate("/", { state: homeNavState(filtersForGroupList(groupId)) });
+  }
+
+  function viewGroupBest(groupId: string, exercise: string) {
+    navigate(
+      "/",
+      { state: homeNavState(filtersForGroupBest(groupId, exercise)) }
+    );
+  }
 
   return (
     <div>
@@ -57,20 +77,18 @@ export function StatisticsPage() {
               <span className={styles.statLabel}>{t("stats.totalPrs")}</span>
             </div>
             <div className={styles.statCard}>
-              <span className={styles.statValue}>{overview.exerciseCount}</span>
-              <span className={styles.statLabel}>
-                {t("stats.exercises")}
-              </span>
-            </div>
-            <div className={styles.statCard}>
-              <span className={styles.statValue}>
-                {overview.best1RmOverall ?? "—"}
-              </span>
-              <span className={styles.statLabel}>{t("stats.best1Rm")}</span>
-            </div>
-            <div className={styles.statCard}>
               <span className={styles.statValue}>{overview.prsLast30Days}</span>
               <span className={styles.statLabel}>{t("stats.last30")}</span>
+            </div>
+            <div className={`${styles.statCard} ${styles.statCardCoverage}`}>
+              <span className={styles.statValue}>{coverage.percent}%</span>
+              <span className={styles.statSub}>
+                {t("stats.coverageFraction", {
+                  logged: coverage.loggedPresets,
+                  total: coverage.total,
+                })}
+              </span>
+              <span className={styles.statLabel}>{t("stats.coverage")}</span>
             </div>
           </section>
 
@@ -106,8 +124,7 @@ export function StatisticsPage() {
           </section>
 
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t("stats.groupAverages")}</h2>
-            <p className={styles.hint}>{t("stats.groupHint")}</p>
+            <h2 className={styles.sectionTitle}>{t("stats.groupBests")}</h2>
             <ul className={styles.groupList}>
               {groupStats.map((g) => (
                 <li key={g.id} className={styles.groupCard}>
@@ -119,44 +136,37 @@ export function StatisticsPage() {
                   </div>
                   {g.prCount === 0 ? (
                     <p className={styles.groupEmpty}>{t("stats.noGroupData")}</p>
-                  ) : (
-                    <div className={styles.groupMetrics}>
-                      <div>
-                        <span className={styles.metricLabel}>
-                          {t("stats.avg1Rm")}
+                  ) : g.bestExercise && g.best1Rm != null ? (
+                    <div className={styles.groupBody}>
+                      <button
+                        type="button"
+                        className={styles.bestBtn}
+                        onClick={() =>
+                          viewGroupBest(g.id, g.bestExercise!)
+                        }
+                      >
+                        <span className={styles.bestLabel}>
+                          {t("stats.best")}
                         </span>
-                        <span className={styles.metricValue}>
-                          {g.avgEstimated1Rm} {t("units.kg")}
+                        <span className={styles.bestExercise}>
+                          {g.bestExercise}
                         </span>
-                      </div>
-                      <div>
-                        <span className={styles.metricLabel}>
-                          {t("stats.avgWeight")}
+                        <span className={styles.bestValue}>
+                          {g.best1Rm} {t("units.kg")}
                         </span>
-                        <span className={styles.metricValue}>
-                          {g.avgWeightKg} {t("units.kg")}
-                        </span>
-                      </div>
-                      {g.bestExercise && g.best1Rm != null && (
-                        <div className={styles.groupBest}>
-                          {t("stats.groupBest", {
-                            exercise: g.bestExercise,
-                            weight: g.best1Rm,
-                          })}
-                        </div>
-                      )}
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn btn-secondary ${styles.listBtn}`}
+                        onClick={() => viewGroupList(g.id)}
+                      >
+                        {t("stats.showList")}
+                      </button>
                     </div>
-                  )}
+                  ) : null}
                 </li>
               ))}
             </ul>
-          </section>
-
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t("stats.volume")}</h2>
-            <p className={styles.volumeLine}>
-              {t("stats.totalVolume", { volume: overview.totalVolume })}
-            </p>
           </section>
         </>
       )}

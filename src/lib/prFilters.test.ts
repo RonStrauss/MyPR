@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { applyPrFilters, DEFAULT_PR_FILTERS } from "./prFilters";
+import {
+  applyPrFilters,
+  countActiveFilters,
+  DEFAULT_PR_FILTERS,
+} from "./prFilters";
 import type { PrRecord } from "@/types/pr";
 
 function record(
@@ -14,6 +18,20 @@ function record(
     ...overrides,
   };
 }
+
+describe("countActiveFilters", () => {
+  it("counts each active criterion", () => {
+    expect(countActiveFilters(DEFAULT_PR_FILTERS)).toBe(0);
+    expect(
+      countActiveFilters({
+        ...DEFAULT_PR_FILTERS,
+        groupId: "squats",
+        dateFrom: "2024-01-01",
+        onlyHighest: true,
+      })
+    ).toBe(3);
+  });
+});
 
 describe("applyPrFilters", () => {
   const records = [

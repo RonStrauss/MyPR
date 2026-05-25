@@ -9,6 +9,7 @@ import { PrCard } from "@/components/PrCard/PrCard";
 import { PrFilters } from "@/components/PrFilters/PrFilters";
 import { PrForm } from "@/components/PrForm/PrForm";
 import { useAuth } from "@/contexts/AuthContext";
+import { useModal } from "@/contexts/ModalContext";
 import { usePrs } from "@/hooks/usePrs";
 import { pickCelebrationMessage } from "@/lib/celebration";
 import {
@@ -17,6 +18,7 @@ import {
   hasActiveFilters,
   type PrFiltersState,
 } from "@/lib/prFilters";
+import type { HomePageState } from "@/lib/navigation";
 import { getCelebrationsEnabled } from "@/lib/preferences";
 import { getBestPrIds } from "@/lib/prRanking";
 import { getExercisesWithData } from "@/lib/statistics";
@@ -27,13 +29,11 @@ import styles from "./Home.module.css";
 export function HomePage() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { openModal } = useModal();
   const { records, loading, error } = usePrs(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
   const [editing, setEditing] = useState<PrRecord | null>(null);
-  const [calculatorRecord, setCalculatorRecord] = useState<PrRecord | null>(
-    null
-  );
   const [celebrationMsg, setCelebrationMsg] = useState<string | null>(null);
   const [filters, setFilters] = useState<PrFiltersState>(DEFAULT_PR_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -50,15 +50,34 @@ export function HomePage() {
   const filtersActive = hasActiveFilters(filters);
 
   useEffect(() => {
-    const state = location.state as { celebrate?: boolean } | null;
-    if (!state?.celebrate) return;
-    navigate(location.pathname, { replace: true, state: null });
-    if (!getCelebrationsEnabled()) return;
-    const msgs = t("celebration.messages", { returnObjects: true });
-    if (Array.isArray(msgs)) {
-      setCelebrationMsg(pickCelebrationMessage(msgs as string[]));
+    const state = location.state as HomePageState | null;
+    if (!state) return;
+
+    if (state.filters) {
+      setFilters(state.filters);
+      setFiltersOpen(state.filtersOpen === true);
     }
+
+    if (state.celebrate) {
+      if (getCelebrationsEnabled()) {
+        const msgs = t("celebration.messages", { returnObjects: true });
+        if (Array.isArray(msgs)) {
+          setCelebrationMsg(pickCelebrationMessage(msgs as string[]));
+        }
+      }
+    }
+
+    navigate(location.pathname, { replace: true, state: null });
   }, [location.state, location.pathname, navigate, t]);
+
+  function openCalculator(record: PrRecord) {
+    openModal(
+      <PercentageCalculator
+        exercise={record.exercise}
+        baseWeightKg={record.weightKg}
+      />
+    );
+  }
 
   async function handleDelete(record: PrRecord) {
     if (!user || !confirm(t("pr.confirmDelete"))) return;
@@ -87,13 +106,6 @@ export function HomePage() {
         <CelebrationOverlay
           message={celebrationMsg}
           onDone={() => setCelebrationMsg(null)}
-        />
-      )}
-      {calculatorRecord && (
-        <PercentageCalculator
-          exercise={calculatorRecord.exercise}
-          baseWeightKg={calculatorRecord.weightKg}
-          onClose={() => setCalculatorRecord(null)}
         />
       )}
 
@@ -178,7 +190,7 @@ export function HomePage() {
               isBestPr={bestPrIds.has(record.id)}
               onEdit={setEditing}
               onDelete={handleDelete}
-              onCalculator={setCalculatorRecord}
+              onCalculator={() => openCalculator(record)}
             />
           </div>
         ))}

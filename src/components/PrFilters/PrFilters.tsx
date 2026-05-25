@@ -1,8 +1,10 @@
 import { Filter, X } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { EXERCISE_GROUPS } from "@/lib/statistics";
 import {
   DEFAULT_PR_FILTERS,
+  countActiveFilters,
   hasActiveFilters,
   type PrFiltersState,
 } from "@/lib/prFilters";
@@ -29,6 +31,26 @@ export function PrFilters({
 }: Props) {
   const { t } = useTranslation();
   const active = hasActiveFilters(filters);
+  const activeCount = countActiveFilters(filters);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: PointerEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        onOpenChange(false);
+      }
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onOpenChange(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, onOpenChange]);
 
   function patch(partial: Partial<PrFiltersState>) {
     const next = { ...filters, ...partial };
@@ -39,20 +61,21 @@ export function PrFilters({
   }
 
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} ref={rootRef}>
       <button
         type="button"
         className={`${styles.toggleBtn} ${active ? styles.toggleBtnActive : ""}`}
         onClick={() => onOpenChange(!open)}
         aria-expanded={open}
+        aria-haspopup="dialog"
       >
         <Filter size={16} />
         {t("filters.title")}
-        {active && <span className={styles.badge}>{resultCount}</span>}
+        {active && <span className={styles.badge}>{activeCount}</span>}
       </button>
 
       {open && (
-        <div className={styles.panel}>
+        <div className={styles.panel} role="dialog" aria-label={t("filters.title")}>
           <div className={styles.panelHeader}>
             <span className={styles.resultCount}>
               {t("filters.showing", { count: resultCount, total: totalCount })}
@@ -153,20 +176,22 @@ export function PrFilters({
             <label className={styles.checkLabel}>
               <input
                 type="checkbox"
+                className={styles.checkbox}
                 checked={filters.onlyHighest}
                 onChange={(e) => patch({ onlyHighest: e.target.checked })}
               />
-              {t("filters.onlyHighest")}
+              <span>{t("filters.onlyHighest")}</span>
             </label>
             <label className={styles.checkLabel}>
               <input
                 type="checkbox"
+                className={styles.checkbox}
                 checked={filters.withCommentsOnly}
                 onChange={(e) =>
                   patch({ withCommentsOnly: e.target.checked })
                 }
               />
-              {t("filters.withComments")}
+              <span>{t("filters.withComments")}</span>
             </label>
           </div>
         </div>
