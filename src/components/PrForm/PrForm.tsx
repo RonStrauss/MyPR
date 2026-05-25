@@ -99,10 +99,6 @@ export function PrForm({
     <form className={styles.form} onSubmit={handleSubmit}>
       <h2 className={styles.title}>{heading}</h2>
 
-      {lockedExercise && (
-        <p className={styles.exerciseLabel}>{lockedExercise}</p>
-      )}
-
       {allowCustomExercise && (
         <div className="form-group">
           <label className="label" htmlFor="exercise-custom">

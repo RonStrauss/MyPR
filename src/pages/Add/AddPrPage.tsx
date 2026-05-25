@@ -33,7 +33,7 @@ export function AddPrPage() {
       allowCustomExercise={isCustom}
       onSubmit={handleSubmit}
       onCancel={() => navigate("/add")}
-      title={isCustom ? t("pr.add") : decoded}
+      title={isCustom ? t("pr.add") : undefined}
     />
   );
 }

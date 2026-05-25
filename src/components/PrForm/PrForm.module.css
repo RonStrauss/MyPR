@@ -28,13 +28,6 @@
   color: var(--accent);
 }
 
-.exerciseLabel {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
-
 .visibility {
   display: flex;
   align-items: center;

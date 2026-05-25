@@ -30,16 +30,14 @@ npm install
 2. Add a **Web app** and copy the config values.
 3. Enable **Authentication** → **Google** sign-in only (disable Email/Password if it was enabled).
 4. Create a **Firestore** database (production mode is fine once rules are deployed).
-5. Install the [Firebase CLI](https://firebase.google.com/docs/cli) and link your project:
+5. Install the [Firebase CLI](https://firebase.google.com/docs/cli) and log in:
 
    ```bash
    npm install -g firebase-tools
    firebase login
-   cp .firebaserc.example .firebaserc
-   # Edit .firebaserc and set your project ID
    ```
 
-6. Deploy security rules from `firestore.rules`:
+6. Deploy security rules from `firestore.rules` (reads `VITE_FIREBASE_PROJECT_ID` from `.env`):
 
    ```bash
    npm run firebase:deploy-rules

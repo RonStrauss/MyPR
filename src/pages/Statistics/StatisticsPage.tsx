@@ -1,5 +1,6 @@
 import { TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Select } from "@/components/Select/Select";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "@/components/Loader/Loader";
@@ -32,6 +33,10 @@ export function StatisticsPage() {
   const [selected, setSelected] = useState("");
 
   const activeExercise = selected || exercises[0] || "";
+  const exerciseSelectOptions = useMemo(
+    () => exercises.map((ex) => ({ value: ex, label: ex })),
+    [exercises]
+  );
   const series = useMemo(
     () => getProgressSeries(records, activeExercise),
     [records, activeExercise]
@@ -94,17 +99,12 @@ export function StatisticsPage() {
 
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>{t("stats.progress")}</h2>
-            <select
+            <Select
               className={styles.select}
               value={activeExercise}
-              onChange={(e) => setSelected(e.target.value)}
-            >
-              {exercises.map((ex) => (
-                <option key={ex} value={ex}>
-                  {ex}
-                </option>
-              ))}
-            </select>
+              onValueChange={setSelected}
+              options={exerciseSelectOptions}
+            />
             {improvement && (
               <p
                 className={`${styles.improvement} ${improvement.delta >= 0 ? styles.up : styles.down}`}

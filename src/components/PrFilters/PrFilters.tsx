@@ -1,6 +1,7 @@
 import { Filter, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { Select } from "@/components/Select/Select";
 import { EXERCISE_GROUPS } from "@/lib/statistics";
 import {
   DEFAULT_PR_FILTERS,
@@ -29,25 +30,35 @@ export function PrFilters({
   onOpenChange,
   onChange,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const panelDir = i18n.dir();
   const active = hasActiveFilters(filters);
   const activeCount = countActiveFilters(filters);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    function onPointerDown(e: PointerEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        onOpenChange(false);
+    function onClickOutside(e: MouseEvent) {
+      const target = e.target;
+      if (!(target instanceof Node)) return;
+      if (rootRef.current?.contains(target)) return;
+      if (
+        target instanceof Element &&
+        target.closest(
+          "[data-radix-select-content], [data-radix-popper-content-wrapper], [data-radix-select-trigger]"
+        )
+      ) {
+        return;
       }
+      onOpenChange(false);
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onOpenChange(false);
     }
-    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("click", onClickOutside);
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("click", onClickOutside);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open, onOpenChange]);
@@ -59,6 +70,34 @@ export function PrFilters({
     }
     onChange(next);
   }
+
+  const groupOptions = useMemo(
+    () => [
+      { value: "", label: t("filters.allGroups") },
+      ...EXERCISE_GROUPS.map((g) => ({
+        value: g.id,
+        label: t(g.labelKey),
+      })),
+    ],
+    [t]
+  );
+
+  const exerciseOptions = useMemo(
+    () => [
+      { value: "", label: t("filters.allExercises") },
+      ...exercises.map((ex) => ({ value: ex, label: ex })),
+    ],
+    [exercises, t]
+  );
+
+  const visibilityOptions = useMemo(
+    () => [
+      { value: "all", label: t("filters.visibilityAll") },
+      { value: "public", label: t("filters.visibilityPublic") },
+      { value: "private", label: t("filters.visibilityPrivate") },
+    ],
+    [t]
+  );
 
   return (
     <div className={styles.wrap} ref={rootRef}>
@@ -75,7 +114,12 @@ export function PrFilters({
       </button>
 
       {open && (
-        <div className={styles.panel} role="dialog" aria-label={t("filters.title")}>
+        <div
+          className={styles.panel}
+          dir={panelDir}
+          role="dialog"
+          aria-label={t("filters.title")}
+        >
           <div className={styles.panelHeader}>
             <span className={styles.resultCount}>
               {t("filters.showing", { count: resultCount, total: totalCount })}
@@ -96,36 +140,24 @@ export function PrFilters({
             <label className="label" htmlFor="filter-group">
               {t("filters.group")}
             </label>
-            <select
+            <Select
               id="filter-group"
               value={filters.groupId}
-              onChange={(e) => patch({ groupId: e.target.value })}
-            >
-              <option value="">{t("filters.allGroups")}</option>
-              {EXERCISE_GROUPS.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {t(g.labelKey)}
-                </option>
-              ))}
-            </select>
+              onValueChange={(groupId) => patch({ groupId })}
+              options={groupOptions}
+            />
           </div>
 
           <div className={styles.field}>
             <label className="label" htmlFor="filter-exercise">
               {t("filters.exercise")}
             </label>
-            <select
+            <Select
               id="filter-exercise"
               value={filters.exercise}
-              onChange={(e) => patch({ exercise: e.target.value })}
-            >
-              <option value="">{t("filters.allExercises")}</option>
-              {exercises.map((ex) => (
-                <option key={ex} value={ex}>
-                  {ex}
-                </option>
-              ))}
-            </select>
+              onValueChange={(exercise) => patch({ exercise })}
+              options={exerciseOptions}
+            />
           </div>
 
           <div className={styles.dateRow}>
@@ -157,19 +189,16 @@ export function PrFilters({
             <label className="label" htmlFor="filter-visibility">
               {t("filters.visibility")}
             </label>
-            <select
+            <Select
               id="filter-visibility"
               value={filters.visibility}
-              onChange={(e) =>
+              onValueChange={(visibility) =>
                 patch({
-                  visibility: e.target.value as PrFiltersState["visibility"],
+                  visibility: visibility as PrFiltersState["visibility"],
                 })
               }
-            >
-              <option value="all">{t("filters.visibilityAll")}</option>
-              <option value="public">{t("filters.visibilityPublic")}</option>
-              <option value="private">{t("filters.visibilityPrivate")}</option>
-            </select>
+              options={visibilityOptions}
+            />
           </div>
 
           <div className={styles.checks}>

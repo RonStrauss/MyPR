@@ -80,8 +80,7 @@ button {
 }
 
 input,
-textarea,
-select {
+textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
@@ -92,8 +91,7 @@ select {
 }
 
 input:focus,
-textarea:focus,
-select:focus {
+textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
@@ -272,8 +270,7 @@ input[type="number"] {
 
   .btn,
   input,
-  textarea,
-  select {
+  textarea {
     transition: none;
   }
 }
