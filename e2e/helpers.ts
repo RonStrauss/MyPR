@@ -34,6 +34,34 @@ export async function openFilters(page: Page) {
   await expect(page.getByTestId("filters-panel")).toBeVisible();
 }
 
+/** Simulate a pointer click outside an open Radix select (Playwright clicks are blocked). */
+export async function pointerDownOutsideSelect(page: Page) {
+  await page.evaluate(() => {
+    const init: PointerEventInit = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      pointerId: 1,
+      pointerType: "mouse",
+      isPrimary: true,
+      button: 0,
+      buttons: 1,
+      clientX: 8,
+      clientY: 8,
+    };
+    document.dispatchEvent(new PointerEvent("pointerdown", init));
+    document.dispatchEvent(new PointerEvent("pointerup", { ...init, buttons: 0 }));
+  });
+}
+
+/** Open a filter select dropdown without choosing an option */
+export async function openFilterSelect(page: Page, fieldId: string) {
+  const panel = page.getByTestId("filters-panel");
+  await expect(panel).toBeVisible();
+  await panel.locator(`#${fieldId}`).click();
+  await expect(page.getByRole("listbox")).toBeVisible();
+}
+
 /** Pick an option from a filter select by field id */
 export async function pickFilterSelect(
   page: Page,

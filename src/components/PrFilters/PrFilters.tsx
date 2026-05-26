@@ -11,6 +11,18 @@ import {
 } from "@/lib/prFilters";
 import styles from "./PrFilters.module.css";
 
+function isFilterSelectOpen(): boolean {
+  return Boolean(document.querySelector('[role="listbox"][data-state="open"]'));
+}
+
+function isSelectLayerTarget(target: Element): boolean {
+  return Boolean(
+    target.closest(
+      '[data-radix-popper-content-wrapper], [role="listbox"], [role="option"]'
+    )
+  );
+}
+
 type Props = {
   filters: PrFiltersState;
   exercises: string[];
@@ -63,25 +75,21 @@ export function PrFilters({
       const target = e.target;
       if (!(target instanceof Element)) return;
       if (rootRef.current?.contains(target)) return;
-      if (
-        target.closest(
-          '[data-radix-popper-content-wrapper], [role="listbox"], [role="option"]'
-        )
-      ) {
-        return;
-      }
+      if (isSelectLayerTarget(target)) return;
+      // Select is portaled; Radix closes it first — keep the filters panel open.
+      if (isFilterSelectOpen()) return;
       onOpenChange(false);
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key !== "Escape") return;
-      if (document.querySelector('[role="listbox"]')) return;
+      if (isFilterSelectOpen()) return;
       onOpenChange(false);
     }
     document.addEventListener("pointerdown", onPointerDownOutside, true);
-    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", onKeyDown, true);
     return () => {
       document.removeEventListener("pointerdown", onPointerDownOutside, true);
-      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onKeyDown, true);
     };
   }, [open, onOpenChange]);
 

@@ -1,5 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { gotoApp, openFilters, pickFilterSelect, resetMockData } from "./helpers";
+import {
+  gotoApp,
+  openFilterSelect,
+  openFilters,
+  pickFilterSelect,
+  pointerDownOutsideSelect,
+  resetMockData,
+} from "./helpers";
 
 test.describe("Home — PR list", () => {
   test.beforeEach(async ({ page }) => {
@@ -50,5 +57,31 @@ test.describe("Home — PR list", () => {
       .click();
     await expect(page.getByText("Deadlift")).toBeVisible();
     await expect(page.getByText("Back Squat")).toBeVisible();
+  });
+
+  test("Escape closes open select but keeps filters panel", async ({ page }) => {
+    await openFilters(page);
+    await openFilterSelect(page, "filter-exercise");
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("filters-panel")).toBeVisible();
+    await expect(page.getByRole("listbox")).not.toBeVisible();
+  });
+
+  test("clicking outside filters while select is open closes select but keeps panel", async ({
+    page,
+  }) => {
+    await openFilters(page);
+    await openFilterSelect(page, "filter-exercise");
+    await pointerDownOutsideSelect(page);
+    await expect(page.getByTestId("filters-panel")).toBeVisible();
+    await expect(page.getByRole("listbox")).not.toBeVisible();
+  });
+
+  test("clicking outside filters with select closed closes the panel", async ({
+    page,
+  }) => {
+    await openFilters(page);
+    await page.locator("h1").first().click();
+    await expect(page.getByTestId("filters-panel")).not.toBeVisible();
   });
 });
