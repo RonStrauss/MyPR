@@ -54,7 +54,7 @@ export function PrForm({
 
   const exerciseName = lockedExercise ?? customExercise.trim();
   const heading =
-    title ?? (initial ? t("pr.edit") : lockedExercise ?? t("pr.add"));
+    title ?? (initial ? t("pr.editTitle") : lockedExercise ?? t("pr.add"));
 
   function resolveErrorMessage(code: ValidationErrorCode): string {
     return t(ERROR_I18N[code]);

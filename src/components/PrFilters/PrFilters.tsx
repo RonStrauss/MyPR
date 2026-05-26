@@ -1,5 +1,5 @@
 import { Filter, X } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Select } from "@/components/Select/Select";
 import { EXERCISE_GROUPS } from "@/lib/statistics";
@@ -35,17 +35,37 @@ export function PrFilters({
   const active = hasActiveFilters(filters);
   const activeCount = countActiveFilters(filters);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    function updateMaxHeight() {
+      const el = panelRef.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top;
+      const nav = document.querySelector('[data-testid="bottom-nav"]');
+      const navTop = nav?.getBoundingClientRect().top ?? window.innerHeight;
+      const max = Math.max(140, navTop - top - 8);
+      el.style.maxHeight = `${max}px`;
+    }
+
+    updateMaxHeight();
+    window.addEventListener("resize", updateMaxHeight);
+    return () => window.removeEventListener("resize", updateMaxHeight);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
-    function onClickOutside(e: MouseEvent) {
+    function onPointerDownOutside(e: PointerEvent) {
       const target = e.target;
-      if (!(target instanceof Node)) return;
+      if (!(target instanceof Element)) return;
       if (rootRef.current?.contains(target)) return;
       if (
-        target instanceof Element &&
         target.closest(
-          "[data-radix-select-content], [data-radix-popper-content-wrapper], [data-radix-select-trigger]"
+          '[data-radix-popper-content-wrapper], [role="listbox"], [role="option"]'
         )
       ) {
         return;
@@ -53,12 +73,14 @@ export function PrFilters({
       onOpenChange(false);
     }
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onOpenChange(false);
+      if (e.key !== "Escape") return;
+      if (document.querySelector('[role="listbox"]')) return;
+      onOpenChange(false);
     }
-    document.addEventListener("click", onClickOutside);
+    document.addEventListener("pointerdown", onPointerDownOutside, true);
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener("click", onClickOutside);
+      document.removeEventListener("pointerdown", onPointerDownOutside, true);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open, onOpenChange]);
@@ -115,10 +137,12 @@ export function PrFilters({
 
       {open && (
         <div
+          ref={panelRef}
           className={styles.panel}
           dir={panelDir}
           role="dialog"
           aria-label={t("filters.title")}
+          data-testid="filters-panel"
         >
           <div className={styles.panelHeader}>
             <span className={styles.resultCount}>

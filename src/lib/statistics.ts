@@ -1,10 +1,9 @@
 import { PRESET_EXERCISES } from "@/constants/exercises";
-import { estimateOneRm } from "@/lib/oneRm";
+import { pickBestRecord, toGroupBest, type GroupBest } from "@/lib/bestPr";
 import type { PrRecord } from "@/types/pr";
 
 export type ProgressPoint = {
   date: string;
-  estimated1Rm: number;
   weightKg: number;
   reps: number;
 };
@@ -13,11 +12,9 @@ export type GroupStats = {
   id: string;
   labelKey: string;
   exercises: string[];
-  avgEstimated1Rm: number | null;
   avgWeightKg: number | null;
   prCount: number;
-  bestExercise: string | null;
-  best1Rm: number | null;
+  best: GroupBest | null;
 };
 
 export const EXERCISE_GROUPS: { id: string; labelKey: string; exercises: string[] }[] =
@@ -103,7 +100,6 @@ export function getProgressSeries(
     .sort((a, b) => a.date.localeCompare(b.date) || a.createdAt - b.createdAt)
     .map((r) => ({
       date: r.date,
-      estimated1Rm: Math.round(estimateOneRm(r.weightKg, r.reps) * 10) / 10,
       weightKg: r.weightKg,
       reps: r.reps,
     }));
@@ -121,21 +117,12 @@ export function computeGroupStats(
       id: group.id,
       labelKey: group.labelKey,
       exercises: group.exercises,
-      avgEstimated1Rm: null,
       avgWeightKg: null,
       prCount: 0,
-      bestExercise: null,
-      best1Rm: null,
+      best: null,
     };
   }
 
-  const estimates = groupRecords.map((r) =>
-    estimateOneRm(r.weightKg, r.reps)
-  );
-  const avgEstimated1Rm =
-    Math.round(
-      (estimates.reduce((a, b) => a + b, 0) / estimates.length) * 10
-    ) / 10;
   const avgWeightKg =
     Math.round(
       (groupRecords.reduce((s, r) => s + r.weightKg, 0) /
@@ -143,29 +130,15 @@ export function computeGroupStats(
         10
     ) / 10;
 
-  let bestExercise: string | null = null;
-  let best1Rm: number | null = null;
-  for (const ex of group.exercises) {
-    const exRecords = groupRecords.filter((r) => r.exercise === ex);
-    if (exRecords.length === 0) continue;
-    const best = Math.max(
-      ...exRecords.map((r) => estimateOneRm(r.weightKg, r.reps))
-    );
-    if (best1Rm === null || best > best1Rm) {
-      best1Rm = Math.round(best * 10) / 10;
-      bestExercise = ex;
-    }
-  }
+  const bestRecord = pickBestRecord(groupRecords);
 
   return {
     id: group.id,
     labelKey: group.labelKey,
     exercises: group.exercises,
-    avgEstimated1Rm,
     avgWeightKg,
     prCount: groupRecords.length,
-    bestExercise,
-    best1Rm,
+    best: bestRecord ? toGroupBest(bestRecord) : null,
   };
 }
 
@@ -175,10 +148,6 @@ export function computeOverview(records: PrRecord[]) {
     (s, r) => s + r.weightKg * r.reps,
     0
   );
-  const best1RmOverall =
-    records.length > 0
-      ? Math.max(...records.map((r) => estimateOneRm(r.weightKg, r.reps)))
-      : null;
 
   const last30 = records.filter((r) => {
     const d = new Date(r.date);
@@ -191,9 +160,6 @@ export function computeOverview(records: PrRecord[]) {
     totalPrs: records.length,
     exerciseCount: exercises.size,
     totalVolume: Math.round(totalVolume),
-    best1RmOverall: best1RmOverall
-      ? Math.round(best1RmOverall * 10) / 10
-      : null,
     prsLast30Days: last30.length,
   };
 }
@@ -202,8 +168,8 @@ export function getImprovement(
   series: ProgressPoint[]
 ): { delta: number; percent: number } | null {
   if (series.length < 2) return null;
-  const first = series[0].estimated1Rm;
-  const last = series[series.length - 1].estimated1Rm;
+  const first = series[0].weightKg;
+  const last = series[series.length - 1].weightKg;
   const delta = Math.round((last - first) * 10) / 10;
   const percent = first > 0 ? Math.round((delta / first) * 1000) / 10 : 0;
   return { delta, percent };

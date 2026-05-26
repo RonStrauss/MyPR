@@ -16,7 +16,7 @@ export function ProgressChart({ series, unitLabel, emptyLabel }: Props) {
     return <p className={styles.empty}>{emptyLabel}</p>;
   }
 
-  const values = series.map((p) => p.estimated1Rm);
+  const values = series.map((p) => p.weightKg);
   const minV = Math.min(...values);
   const maxV = Math.max(...values);
   const range = maxV - minV || 1;
@@ -27,7 +27,7 @@ export function ProgressChart({ series, unitLabel, emptyLabel }: Props) {
     const x =
       PAD.left +
       (series.length === 1 ? innerW / 2 : (i / (series.length - 1)) * innerW);
-    const y = PAD.top + innerH - ((p.estimated1Rm - minV) / range) * innerH;
+    const y = PAD.top + innerH - ((p.weightKg - minV) / range) * innerH;
     return { x, y, ...p };
   });
 

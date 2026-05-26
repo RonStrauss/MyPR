@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  EXERCISE_GROUPS,
   computeExerciseCoverage,
   computeGroupStats,
   computeOverview,
@@ -50,15 +51,31 @@ describe("computeGroupStats", () => {
       exercises: ["Back Squat"],
     });
     expect(stats.prCount).toBe(0);
-    expect(stats.avgEstimated1Rm).toBeNull();
+    expect(stats.best).toBeNull();
+  });
+
+  it("reports the heaviest logged lift as group best", () => {
+    const deadliftGroup = EXERCISE_GROUPS.find((g) => g.id === "deadlifts")!;
+    const stats = computeGroupStats(
+      [
+        record({ exercise: "Deadlift", weightKg: 120, reps: 5, id: "a" }),
+        record({ exercise: "Deadlift", weightKg: 140, reps: 3, id: "b" }),
+      ],
+      deadliftGroup
+    );
+    expect(stats.best).toEqual({
+      exercise: "Deadlift",
+      weightKg: 140,
+      reps: 3,
+    });
   });
 });
 
 describe("getImprovement", () => {
   it("computes delta between first and last point", () => {
     const imp = getImprovement([
-      { date: "2024-01-01", estimated1Rm: 100, weightKg: 100, reps: 1 },
-      { date: "2024-06-01", estimated1Rm: 110, weightKg: 110, reps: 1 },
+      { date: "2024-01-01", weightKg: 100, reps: 1 },
+      { date: "2024-06-01", weightKg: 110, reps: 1 },
     ]);
     expect(imp).toEqual({ delta: 10, percent: 10 });
   });

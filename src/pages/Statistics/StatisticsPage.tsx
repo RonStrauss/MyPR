@@ -126,46 +126,50 @@ export function StatisticsPage() {
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>{t("stats.groupBests")}</h2>
             <ul className={styles.groupList}>
-              {groupStats.map((g) => (
-                <li key={g.id} className={styles.groupCard}>
-                  <div className={styles.groupTop}>
-                    <span className={styles.groupName}>{t(g.labelKey)}</span>
-                    <span className={styles.groupCount}>
-                      {g.prCount} {t("stats.entries")}
-                    </span>
-                  </div>
-                  {g.prCount === 0 ? (
-                    <p className={styles.groupEmpty}>{t("stats.noGroupData")}</p>
-                  ) : g.bestExercise && g.best1Rm != null ? (
-                    <div className={styles.groupBody}>
-                      <button
-                        type="button"
-                        className={styles.bestBtn}
-                        onClick={() =>
-                          viewGroupBest(g.id, g.bestExercise!)
-                        }
-                      >
-                        <span className={styles.bestLabel}>
-                          {t("stats.best")}
-                        </span>
-                        <span className={styles.bestExercise}>
-                          {g.bestExercise}
-                        </span>
-                        <span className={styles.bestValue}>
-                          {g.best1Rm} {t("units.kg")}
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn btn-secondary ${styles.listBtn}`}
-                        onClick={() => viewGroupList(g.id)}
-                      >
-                        {t("stats.showList")}
-                      </button>
+              {groupStats.map((g) => {
+                const best = g.best;
+                return (
+                  <li key={g.id} className={styles.groupCard}>
+                    <div className={styles.groupTop}>
+                      <span className={styles.groupName}>{t(g.labelKey)}</span>
+                      <span className={styles.groupCount}>
+                        {g.prCount} {t("stats.entries")}
+                      </span>
                     </div>
-                  ) : null}
-                </li>
-              ))}
+                    {g.prCount === 0 ? (
+                      <p className={styles.groupEmpty}>{t("stats.noGroupData")}</p>
+                    ) : best ? (
+                      <div className={styles.groupBody}>
+                        <button
+                          type="button"
+                          className={styles.bestBtn}
+                          onClick={() => viewGroupBest(g.id, best.exercise)}
+                        >
+                          <span className={styles.bestLabel}>
+                            {t("stats.best")}
+                          </span>
+                          <span className={styles.bestExercise}>
+                            {best.exercise}
+                          </span>
+                          <span className={styles.bestValue}>
+                            {t("stats.bestLift", {
+                              weight: best.weightKg,
+                              reps: best.reps,
+                            })}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn-secondary ${styles.listBtn}`}
+                          onClick={() => viewGroupList(g.id)}
+                        >
+                          {t("stats.showList")}
+                        </button>
+                      </div>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ul>
           </section>
         </>

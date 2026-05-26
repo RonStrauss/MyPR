@@ -1,30 +1,14 @@
-import { estimateOneRm } from "@/lib/oneRm";
+import { comparePrRecords } from "@/lib/bestPr";
 import type { PrRecord } from "@/types/pr";
 
-function recordScore(record: PrRecord): number {
-  return estimateOneRm(record.weightKg, record.reps);
-}
-
-/** IDs of records that are the current best (est. 1RM) for their exercise */
+/** IDs of records that are the current best lift for their exercise */
 export function getBestPrIds(records: PrRecord[]): Set<string> {
-  const bestByExercise = new Map<
-    string,
-    { id: string; score: number; date: string }
-  >();
+  const bestByExercise = new Map<string, PrRecord>();
 
   for (const record of records) {
-    const score = recordScore(record);
     const current = bestByExercise.get(record.exercise);
-    if (
-      !current ||
-      score > current.score ||
-      (score === current.score && record.date > current.date)
-    ) {
-      bestByExercise.set(record.exercise, {
-        id: record.id,
-        score,
-        date: record.date,
-      });
+    if (!current || comparePrRecords(record, current) > 0) {
+      bestByExercise.set(record.exercise, record);
     }
   }
 

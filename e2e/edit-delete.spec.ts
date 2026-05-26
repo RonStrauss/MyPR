@@ -1,0 +1,37 @@
+import { test, expect } from "@playwright/test";
+import { gotoApp, resetMockData } from "./helpers";
+
+test.describe("Edit and delete PRs", () => {
+  test.beforeEach(async ({ page }) => {
+    await gotoApp(page);
+    await resetMockData(page);
+  });
+
+  test("edit button shows edit form pre-filled with current values", async ({
+    page,
+  }) => {
+    const deadliftCard = page.getByTestId("pr-card").filter({ hasText: "Deadlift" });
+    await deadliftCard.getByRole("button", { name: /^Edit$|^ערוך$/i }).click();
+    await expect(page.getByRole("heading", { name: /Edit PR|עריכת שיא/i })).toBeVisible();
+    await expect(page.locator("#weight")).toBeVisible();
+    await expect(page.locator("#weight")).toHaveValue("140");
+  });
+
+  test("editing weight updates the card", async ({ page }) => {
+    const deadliftCard = page.getByTestId("pr-card").filter({ hasText: "Deadlift" });
+    await deadliftCard.getByRole("button", { name: /^Edit$|^ערוך$/i }).click();
+    await page.locator("#weight").fill("150");
+    await page.getByRole("button", { name: /save|שמור/i }).click();
+    await expect(page.getByText("150")).toBeVisible();
+  });
+
+  test("delete removes the card after confirmation", async ({ page }) => {
+    page.on("dialog", (dialog) => dialog.accept());
+    const deleteBtn = page
+      .getByTestId("pr-card")
+      .first()
+      .getByRole("button", { name: /Delete|מחק/i });
+    await deleteBtn.click();
+    await expect(page.locator('[class*="statBoxValue"]').first()).toHaveText("1");
+  });
+});

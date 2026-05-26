@@ -24,7 +24,7 @@ export function Layout() {
 				</div>
 			</main>
 
-			<nav className={styles.bottomNav}>
+			<nav className={styles.bottomNav} data-testid="bottom-nav">
 				<NavLink to='/' end className={({ isActive }) => `${styles.navItem} ${styles.navItemRecords} ${isActive ? styles.navItemActive : ''}`}>
 					<List />
 					<span>{t('nav.records')}</span>

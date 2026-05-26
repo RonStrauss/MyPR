@@ -27,7 +27,7 @@ export function PrCard({
   });
 
   return (
-    <article className={`card ${styles.card}`}>
+    <article className={`card ${styles.card}`} data-testid="pr-card">
       <div className={styles.top}>
         <h3 className={styles.exercise}>{record.exercise}</h3>
         <div className={styles.badges}>

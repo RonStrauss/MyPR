@@ -47,9 +47,10 @@
   inset-inline-start: 0;
   z-index: 30;
   width: min(320px, calc(100vw - 2rem));
-  max-height: min(70dvh, 520px);
+  max-height: min(70dvh, calc(100dvh - var(--header-height) - var(--nav-height) - 6rem));
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1rem;
   box-sizing: border-box;
   background: var(--bg-card);
