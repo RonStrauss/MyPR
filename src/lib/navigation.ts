@@ -13,10 +13,7 @@ export function filtersForGroupList(groupId: string): PrFiltersState {
   };
 }
 
-export function filtersForGroupBest(
-  groupId: string,
-  exercise: string
-): PrFiltersState {
+export function filtersForGroupBest(groupId: string, exercise: string): PrFiltersState {
   return {
     ...DEFAULT_PR_FILTERS,
     groupId,

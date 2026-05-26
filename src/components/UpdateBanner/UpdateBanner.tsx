@@ -42,14 +42,16 @@ export function UpdateBanner() {
           {updating && <span className={styles.spinner} aria-hidden />}
           {updating ? t("pwa.updating") : t("pwa.refresh")}
         </button>
-        <button
-          type="button"
-          className="btn btn-ghost"
-          onClick={() => setNeedRefresh(false)}
-          disabled={updating}
-        >
-          {t("pwa.later")}
-        </button>
+        {
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={updating}
+            onClick={() => setNeedRefresh(false)}
+          >
+            {t("pwa.later")}
+          </button>
+        }
       </div>
     </div>
   );

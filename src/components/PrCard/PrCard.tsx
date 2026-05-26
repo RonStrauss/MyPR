@@ -11,13 +11,7 @@ type Props = {
   onCalculator: (record: PrRecord) => void;
 };
 
-export function PrCard({
-  record,
-  isBestPr,
-  onEdit,
-  onDelete,
-  onCalculator,
-}: Props) {
+export function PrCard({ record, isBestPr, onEdit, onDelete, onCalculator }: Props) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language === "he" ? "he-IL" : "en-US";
   const formattedDate = new Date(record.date).toLocaleDateString(locale, {

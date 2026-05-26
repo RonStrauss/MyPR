@@ -6,7 +6,7 @@ import { Loader } from "@/components/Loader/Loader";
 import { CUSTOM_EXERCISE, PRESET_EXERCISES } from "@/constants/exercises";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePrs } from "@/hooks/usePrs";
-import { buildOneRmMap } from "@/lib/oneRm";
+import { buildBestWeightMap } from "@/lib/bestPr";
 import styles from "./WorkoutPicker.module.css";
 
 function exercisePath(name: string) {
@@ -21,7 +21,7 @@ export function WorkoutPickerPage() {
   const isRtl = i18n.dir() === "rtl";
   const Chevron = isRtl ? ChevronLeft : ChevronRight;
 
-  const oneRmByExercise = useMemo(() => buildOneRmMap(records), [records]);
+  const bestWeightByExercise = useMemo(() => buildBestWeightMap(records), [records]);
 
   const customFromRecords = useMemo(() => {
     const presets = new Set<string>(PRESET_EXERCISES);
@@ -57,7 +57,7 @@ export function WorkoutPickerPage() {
       {!loading && (
         <ul className={styles.list}>
           {workouts.map((name, index) => {
-            const oneRm = oneRmByExercise.get(name);
+            const bestWeight = bestWeightByExercise.get(name);
             return (
               <li
                 key={name}
@@ -67,9 +67,9 @@ export function WorkoutPickerPage() {
                 <Link to={exercisePath(name)} className={styles.row}>
                   <span className={styles.name}>{name}</span>
                   <span className={styles.rm}>
-                    {oneRm != null ? (
+                    {bestWeight != null ? (
                       <>
-                        <span className={styles.rmValue}>{oneRm}</span>
+                        <span className={styles.rmValue}>{bestWeight}</span>
                         <span className={styles.rmUnit}>{t("units.kg")}</span>
                       </>
                     ) : (

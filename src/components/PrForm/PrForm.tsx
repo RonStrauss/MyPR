@@ -1,10 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/Loader/Loader";
-import {
-  validatePrInput,
-  type ValidationErrorCode,
-} from "@/lib/validation";
+import { validatePrInput, type ValidationErrorCode } from "@/lib/validation";
 import { PrValidationError } from "@/services/prService";
 import type { PrInput, PrRecord } from "@/types/pr";
 import styles from "./PrForm.module.css";
@@ -42,9 +39,7 @@ export function PrForm({
 }: Props) {
   const { t } = useTranslation();
   const [customExercise, setCustomExercise] = useState(initial?.exercise ?? "");
-  const [weightKg, setWeightKg] = useState(
-    initial?.weightKg?.toString() ?? ""
-  );
+  const [weightKg, setWeightKg] = useState(initial?.weightKg?.toString() ?? "");
   const [reps, setReps] = useState(initial?.reps?.toString() ?? "");
   const [date, setDate] = useState(initial?.date ?? defaultDate());
   const [notes, setNotes] = useState(initial?.notes ?? "");
@@ -54,7 +49,7 @@ export function PrForm({
 
   const exerciseName = lockedExercise ?? customExercise.trim();
   const heading =
-    title ?? (initial ? t("pr.editTitle") : lockedExercise ?? t("pr.add"));
+    title ?? (initial ? t("pr.editTitle") : (lockedExercise ?? t("pr.add")));
 
   function resolveErrorMessage(code: ValidationErrorCode): string {
     return t(ERROR_I18N[code]);

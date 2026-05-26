@@ -13,9 +13,7 @@ test.describe("Statistics page", () => {
     await expect(page.locator("h1").first()).toBeVisible();
   });
 
-  test("overview grid shows total PRs count matching seed data", async ({
-    page,
-  }) => {
+  test("overview grid shows total PRs count matching seed data", async ({ page }) => {
     await expect(page.locator('[class*="statValue"]').first()).toHaveText("2");
   });
 

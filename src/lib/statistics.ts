@@ -43,13 +43,7 @@ export const EXERCISE_GROUPS: { id: string; labelKey: string; exercises: string[
     {
       id: "olympic",
       labelKey: "stats.groups.olympic",
-      exercises: [
-        "Clean",
-        "Power Clean",
-        "Snatch",
-        "Power Snatch",
-        "Thruster",
-      ],
+      exercises: ["Clean", "Power Clean", "Snatch", "Power Snatch", "Thruster"],
     },
     {
       id: "gymnastics",
@@ -71,9 +65,7 @@ export const EXERCISE_GROUPS: { id: string; labelKey: string; exercises: string[
 
 export function getExercisesWithData(records: PrRecord[]): string[] {
   const fromRecords = [...new Set(records.map((r) => r.exercise))];
-  const presets = PRESET_EXERCISES.filter((e) =>
-    records.some((r) => r.exercise === e)
-  );
+  const presets = PRESET_EXERCISES.filter((e) => records.some((r) => r.exercise === e));
   const custom = fromRecords
     .filter((e) => !(PRESET_EXERCISES as readonly string[]).includes(e))
     .sort((a, b) => a.localeCompare(b));
@@ -86,8 +78,7 @@ export function computeExerciseCoverage(records: PrRecord[]) {
   const logged = new Set(records.map((r) => r.exercise));
   const loggedPresets = PRESET_EXERCISES.filter((e) => logged.has(e)).length;
   const total = PRESET_EXERCISES.length;
-  const percent =
-    total > 0 ? Math.round((loggedPresets / total) * 100) : 0;
+  const percent = total > 0 ? Math.round((loggedPresets / total) * 100) : 0;
   return { loggedPresets, total, percent };
 }
 
@@ -109,9 +100,7 @@ export function computeGroupStats(
   records: PrRecord[],
   group: (typeof EXERCISE_GROUPS)[number]
 ): GroupStats {
-  const groupRecords = records.filter((r) =>
-    group.exercises.includes(r.exercise)
-  );
+  const groupRecords = records.filter((r) => group.exercises.includes(r.exercise));
   if (groupRecords.length === 0) {
     return {
       id: group.id,
@@ -125,9 +114,7 @@ export function computeGroupStats(
 
   const avgWeightKg =
     Math.round(
-      (groupRecords.reduce((s, r) => s + r.weightKg, 0) /
-        groupRecords.length) *
-        10
+      (groupRecords.reduce((s, r) => s + r.weightKg, 0) / groupRecords.length) * 10
     ) / 10;
 
   const bestRecord = pickBestRecord(groupRecords);
@@ -144,10 +131,7 @@ export function computeGroupStats(
 
 export function computeOverview(records: PrRecord[]) {
   const exercises = new Set(records.map((r) => r.exercise));
-  const totalVolume = records.reduce(
-    (s, r) => s + r.weightKg * r.reps,
-    0
-  );
+  const totalVolume = records.reduce((s, r) => s + r.weightKg * r.reps, 0);
 
   const last30 = records.filter((r) => {
     const d = new Date(r.date);

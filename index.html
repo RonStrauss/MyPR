@@ -1,55 +1,58 @@
 <!doctype html>
 <html lang="he" dir="rtl">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/dumbbell-black-bg.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="theme-color" content="#0d0d0f" />
-		<meta name="description" content="Track your gym personal records" />
-		<link rel="apple-touch-icon" href="/dumbbell-black-bg.svg" />
-		<title>MyPR — מעקב שיאים אישיים</title>
-		<style>
-			html,
-			body {
-				margin: 0;
-				background: #0d0d0f;
-				color: #f4f4f5;
-			}
-			#root:empty {
-				display: flex;
-				min-height: 100dvh;
-				align-items: center;
-				justify-content: center;
-			}
-			#root:empty::after {
-				content: '';
-				width: 2.5rem;
-				height: 2.5rem;
-				border: 3px solid #2a2a32;
-				border-top-color: #ff5c1a;
-				border-radius: 50%;
-				animation: boot-spin 0.7s linear infinite;
-			}
-			@keyframes boot-spin {
-				to {
-					transform: rotate(360deg);
-				}
-			}
-		</style>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;500;600;700;800&display=swap"
-			rel="stylesheet"
-			media="print"
-			onload="this.media = 'all'"
-		/>
-		<noscript>
-			<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-		</noscript>
-	</head>
-	<body>
-		<div id="root"></div>
-		<script type="module" src="/src/main.tsx"></script>
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/dumbbell-black-bg.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d0d0f" />
+    <meta name="description" content="Track your gym personal records" />
+    <link rel="apple-touch-icon" href="/dumbbell-black-bg.svg" />
+    <title>MyPR — מעקב שיאים אישיים</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #0d0d0f;
+        color: #f4f4f5;
+      }
+      #root:empty {
+        display: flex;
+        min-height: 100dvh;
+        align-items: center;
+        justify-content: center;
+      }
+      #root:empty::after {
+        content: "";
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 3px solid #2a2a32;
+        border-top-color: #ff5c1a;
+        border-radius: 50%;
+        animation: boot-spin 0.7s linear infinite;
+      }
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

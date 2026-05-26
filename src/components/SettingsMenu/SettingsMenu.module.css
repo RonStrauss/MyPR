@@ -10,7 +10,9 @@
   height: 40px;
   border-radius: var(--radius);
   color: var(--text-muted);
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .trigger:hover,
@@ -71,7 +73,9 @@
   background: var(--bg-elevated);
   font-weight: 600;
   font-size: 0.85rem;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 }
 
 .langBtnActive {

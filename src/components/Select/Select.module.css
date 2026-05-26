@@ -14,7 +14,9 @@
   font: inherit;
   color: inherit;
   text-align: start;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .trigger:hover {

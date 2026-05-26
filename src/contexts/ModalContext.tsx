@@ -21,10 +21,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const closeModal = useCallback(() => setContent(null), []);
   const openModal = useCallback((node: ReactNode) => setContent(node), []);
 
-  const value = useMemo(
-    () => ({ openModal, closeModal }),
-    [openModal, closeModal]
-  );
+  const value = useMemo(() => ({ openModal, closeModal }), [openModal, closeModal]);
 
   return (
     <ModalContext.Provider value={value}>

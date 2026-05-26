@@ -39,10 +39,7 @@ export function HomePage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const bestPrIds = useMemo(() => getBestPrIds(records), [records]);
-  const exerciseOptions = useMemo(
-    () => getExercisesWithData(records),
-    [records]
-  );
+  const exerciseOptions = useMemo(() => getExercisesWithData(records), [records]);
   const filteredRecords = useMemo(
     () => applyPrFilters(records, filters, bestPrIds),
     [records, filters, bestPrIds]
@@ -72,10 +69,7 @@ export function HomePage() {
 
   function openCalculator(record: PrRecord) {
     openModal(
-      <PercentageCalculator
-        exercise={record.exercise}
-        baseWeightKg={record.weightKg}
-      />
+      <PercentageCalculator exercise={record.exercise} baseWeightKg={record.weightKg} />
     );
   }
 

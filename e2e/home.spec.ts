@@ -44,7 +44,10 @@ test.describe("Home — PR list", () => {
     await openFilters(page);
     await pickFilterSelect(page, "filter-exercise", "Back Squat");
     const panel = page.getByRole("dialog");
-    await panel.getByRole("button").filter({ hasText: /clear|נקה/i }).click();
+    await panel
+      .getByRole("button")
+      .filter({ hasText: /clear|נקה/i })
+      .click();
     await expect(page.getByText("Deadlift")).toBeVisible();
     await expect(page.getByText("Back Squat")).toBeVisible();
   });

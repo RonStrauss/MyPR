@@ -151,7 +151,10 @@
   background: rgba(255, 92, 26, 0.1);
   border: 1px solid rgba(255, 92, 26, 0.35);
   border-radius: var(--radius);
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.1s;
 }
 
 .listBtn {
@@ -190,4 +193,3 @@
   line-height: 1;
   color: var(--accent);
 }
-

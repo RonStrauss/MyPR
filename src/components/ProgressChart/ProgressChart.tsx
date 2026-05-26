@@ -38,9 +38,7 @@ export function ProgressChart({ series, unitLabel, emptyLabel }: Props) {
       ? `M ${points[0].x} ${PAD.top + innerH} ${points.map((p) => `L ${p.x} ${p.y}`).join(" ")} L ${points[points.length - 1].x} ${PAD.top + innerH} Z`
       : "";
 
-  const yTicks = [minV, minV + range / 2, maxV].map(
-    (v) => Math.round(v * 10) / 10
-  );
+  const yTicks = [minV, minV + range / 2, maxV].map((v) => Math.round(v * 10) / 10);
   const uniqueTicks = [...new Set(yTicks)];
 
   return (

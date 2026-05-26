@@ -85,16 +85,9 @@ export async function addPr(userId: string, input: PrInput) {
   });
 }
 
-export async function updatePr(
-  userId: string,
-  id: string,
-  input: PrInput
-) {
+export async function updatePr(userId: string, id: string, input: PrInput) {
   const valid = assertValidInput(input);
-  await updateDoc(
-    doc(db, "users", userId, "prs", id),
-    toFirestoreFields(valid)
-  );
+  await updateDoc(doc(db, "users", userId, "prs", id), toFirestoreFields(valid));
 }
 
 export async function deletePr(userId: string, id: string) {

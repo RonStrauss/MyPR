@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { changeLanguage, type Lang } from "@/i18n";
 import { isFirebaseConfigured } from "@/lib/firebase";
-import {
-  getCelebrationsEnabled,
-  setCelebrationsEnabled,
-} from "@/lib/preferences";
+import { getCelebrationsEnabled, setCelebrationsEnabled } from "@/lib/preferences";
 import { APP_VERSION } from "@/version";
 import styles from "./SettingsMenu.module.css";
 
@@ -20,9 +17,8 @@ export function SettingsMenu() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
-  const [celebrationsEnabled, setCelebrationsEnabledState] = useState(
-    getCelebrationsEnabled
-  );
+  const [celebrationsEnabled, setCelebrationsEnabledState] =
+    useState(getCelebrationsEnabled);
   const rootRef = useRef<HTMLDivElement>(null);
   const currentLang = i18n.language as Lang;
 
@@ -94,9 +90,7 @@ export function SettingsMenu() {
           </p>
           <div className={styles.settingRow}>
             <div>
-              <span className={styles.settingLabel}>
-                {t("settings.celebrations")}
-              </span>
+              <span className={styles.settingLabel}>{t("settings.celebrations")}</span>
               <span className={styles.settingHint}>
                 {t("settings.celebrationsHint")}
               </span>
@@ -119,9 +113,7 @@ export function SettingsMenu() {
           <div className={styles.divider} />
 
           <p className={styles.menuHeading}>{t("settings.account")}</p>
-          {user?.email && (
-            <p className={styles.email}>{user.email}</p>
-          )}
+          {user?.email && <p className={styles.email}>{user.email}</p>}
           <button
             type="button"
             role="menuitem"

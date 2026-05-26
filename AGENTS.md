@@ -33,7 +33,7 @@ This file documents expectations for automated agents (and future contributors) 
   - Hebrew (`he`) is the default and should always render with `dir="rtl"`; English (`en`) with `dir="ltr"`.
   - When adding new components with text or layout, verify they look correct in both languages (especially grids, flex alignment, and icons/chevrons).
 - **Filters & navigation**:
-  - The home filters popover should *not* auto-open when navigating unless explicitly requested in state.
+  - The home filters popover should _not_ auto-open when navigating unless explicitly requested in state.
   - The filters badge shows the **number of active filters**, not the filtered result count.
 
 ### Testing & quality
@@ -41,9 +41,11 @@ This file documents expectations for automated agents (and future contributors) 
 - **Before pushing or opening a PR**, run:
 
   ```bash
-  npm test          # unit tests (Vitest)
-  npm run build     # TypeScript + Vite build
-  npm run test:e2e  # Playwright end-to-end tests
+  npm run format:check  # Prettier (no write)
+  npm run lint          # ESLint
+  npm test              # unit tests (Vitest)
+  npm run build         # TypeScript + Vite build
+  npm run test:e2e      # Playwright end-to-end tests
   ```
 
   All three must pass.
@@ -54,4 +56,3 @@ This file documents expectations for automated agents (and future contributors) 
   - Use `npm run test:e2e:ui` for interactive debugging.
 
 - Avoid adding new dependencies unless necessary; prefer lightweight, composable solutions that fit the existing stack (React + Vite + Firebase + Radix Select + Lucide + Playwright).
-

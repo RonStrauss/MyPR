@@ -240,9 +240,7 @@ export function PrFilters({
                 type="checkbox"
                 className={styles.checkbox}
                 checked={filters.withCommentsOnly}
-                onChange={(e) =>
-                  patch({ withCommentsOnly: e.target.checked })
-                }
+                onChange={(e) => patch({ withCommentsOnly: e.target.checked })}
               />
               <span>{t("filters.withComments")}</span>
             </label>

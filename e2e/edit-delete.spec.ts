@@ -12,7 +12,9 @@ test.describe("Edit and delete PRs", () => {
   }) => {
     const deadliftCard = page.getByTestId("pr-card").filter({ hasText: "Deadlift" });
     await deadliftCard.getByRole("button", { name: /^Edit$|^ערוך$/i }).click();
-    await expect(page.getByRole("heading", { name: /Edit PR|עריכת שיא/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Edit PR|עריכת שיא/i })
+    ).toBeVisible();
     await expect(page.locator("#weight")).toBeVisible();
     await expect(page.locator("#weight")).toHaveValue("140");
   });

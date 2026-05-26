@@ -35,7 +35,9 @@ try {
   projectId = env.VITE_FIREBASE_PROJECT_ID;
 } catch (err) {
   if (err && typeof err === "object" && "code" in err && err.code === "ENOENT") {
-    console.error(`Missing ${envPath} — copy .env.example and set VITE_FIREBASE_PROJECT_ID.`);
+    console.error(
+      `Missing ${envPath} — copy .env.example and set VITE_FIREBASE_PROJECT_ID.`
+    );
     process.exit(1);
   }
   throw err;

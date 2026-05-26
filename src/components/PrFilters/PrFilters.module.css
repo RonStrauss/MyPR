@@ -16,7 +16,10 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 
 .toggleBtn:hover {
@@ -47,7 +50,10 @@
   inset-inline-start: 0;
   z-index: 30;
   width: min(320px, calc(100vw - 2rem));
-  max-height: min(70dvh, calc(100dvh - var(--header-height) - var(--nav-height) - 6rem));
+  max-height: min(
+    70dvh,
+    calc(100dvh - var(--header-height) - var(--nav-height) - 6rem)
+  );
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;

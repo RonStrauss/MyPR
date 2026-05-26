@@ -47,11 +47,13 @@ body::before {
   inset: 0;
   background:
     radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-glow), transparent),
-    repeating-linear-gradient(0deg,
+    repeating-linear-gradient(
+      0deg,
       transparent,
       transparent 2px,
       rgba(255, 255, 255, 0.015) 2px,
-      rgba(255, 255, 255, 0.015) 4px);
+      rgba(255, 255, 255, 0.015) 4px
+    );
   pointer-events: none;
   z-index: 0;
 }
@@ -87,7 +89,9 @@ textarea {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg-elevated);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
   color-scheme: dark;
 }
 
@@ -118,10 +122,13 @@ input[type="number"] {
   padding: 0.75rem 1.25rem;
   border-radius: var(--radius);
   font-weight: 600;
-  transition: transform 0.1s, background 0.15s, opacity 0.15s;
+  transition:
+    transform 0.1s,
+    background 0.15s,
+    opacity 0.15s;
 }
 
-.btn:active {
+.btn:active:not(:disabled) {
   transform: scale(0.98);
 }
 
@@ -148,7 +155,7 @@ input[type="number"] {
   color: var(--text-muted);
 }
 
-.btn-ghost:hover {
+.btn-ghost:hover:not(:disabled) {
   color: var(--text);
 }
 
@@ -262,7 +269,6 @@ input[type="number"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .page-enter,
   .fade-in,
   .list-item-enter {

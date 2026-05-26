@@ -54,10 +54,7 @@ export function StatisticsPage() {
   }
 
   function viewGroupBest(groupId: string, exercise: string) {
-    navigate(
-      "/",
-      { state: homeNavState(filtersForGroupBest(groupId, exercise)) }
-    );
+    navigate("/", { state: homeNavState(filtersForGroupBest(groupId, exercise)) });
   }
 
   return (
@@ -145,12 +142,8 @@ export function StatisticsPage() {
                           className={styles.bestBtn}
                           onClick={() => viewGroupBest(g.id, best.exercise)}
                         >
-                          <span className={styles.bestLabel}>
-                            {t("stats.best")}
-                          </span>
-                          <span className={styles.bestExercise}>
-                            {best.exercise}
-                          </span>
+                          <span className={styles.bestLabel}>{t("stats.best")}</span>
+                          <span className={styles.bestExercise}>{best.exercise}</span>
                           <span className={styles.bestValue}>
                             {t("stats.bestLift", {
                               weight: best.weightKg,

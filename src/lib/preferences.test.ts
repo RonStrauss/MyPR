@@ -1,8 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  getCelebrationsEnabled,
-  setCelebrationsEnabled,
-} from "./preferences";
+import { getCelebrationsEnabled, setCelebrationsEnabled } from "./preferences";
 
 const store: Record<string, string> = {};
 

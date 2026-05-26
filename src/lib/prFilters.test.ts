@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  applyPrFilters,
-  countActiveFilters,
-  DEFAULT_PR_FILTERS,
-} from "./prFilters";
+import { applyPrFilters, countActiveFilters, DEFAULT_PR_FILTERS } from "./prFilters";
 import type { PrRecord } from "@/types/pr";
 
 function record(
@@ -37,7 +33,13 @@ describe("applyPrFilters", () => {
   const records = [
     record({ id: "a", exercise: "Back Squat", date: "2024-01-01", notes: "felt good" }),
     record({ id: "b", exercise: "Deadlift", date: "2024-06-01", isPublic: true }),
-    record({ id: "c", exercise: "Back Squat", date: "2024-03-01", weightKg: 120, reps: 1 }),
+    record({
+      id: "c",
+      exercise: "Back Squat",
+      date: "2024-03-01",
+      weightKg: 120,
+      reps: 1,
+    }),
   ];
   const bestIds = new Set(["c", "b"]);
 

@@ -52,9 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user, loading, signInWithGoogle, logout]
   );
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

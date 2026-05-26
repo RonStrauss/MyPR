@@ -4,12 +4,7 @@
 import type { PrInput, PrRecord } from "@/types/pr";
 import type { ValidationErrorCode } from "@/lib/validation";
 import { validatePrInput } from "@/lib/validation";
-import {
-  subscribe,
-  addRecord,
-  updateRecord,
-  deleteRecord,
-} from "./store";
+import { subscribe, addRecord, updateRecord, deleteRecord } from "./store";
 
 export class PrValidationError extends Error {
   code: ValidationErrorCode;

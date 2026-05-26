@@ -89,9 +89,7 @@ describe("computeExerciseCoverage", () => {
     ]);
     expect(coverage.loggedPresets).toBe(2);
     expect(coverage.total).toBe(PRESET_EXERCISES.length);
-    expect(coverage.percent).toBe(
-      Math.round((2 / PRESET_EXERCISES.length) * 100)
-    );
+    expect(coverage.percent).toBe(Math.round((2 / PRESET_EXERCISES.length) * 100));
   });
 });
 

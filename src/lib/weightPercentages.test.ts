@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  isValidBaseWeightKg,
-  weightAtPercent,
-} from "./weightPercentages";
+import { isValidBaseWeightKg, weightAtPercent } from "./weightPercentages";
 
 describe("weightAtPercent", () => {
   it("rounds to nearest 0.5 kg", () => {

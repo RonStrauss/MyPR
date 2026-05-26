@@ -109,7 +109,9 @@
   justify-content: center;
   margin-top: -20px;
   box-shadow: 0 4px 20px var(--accent-glow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .navItemFab:active .fab {
