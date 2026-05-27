@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export async function assertMocksActive(page: Page) {
   const active = await page.evaluate(
@@ -90,6 +90,67 @@ export async function assertNoHorizontalOverflow(page: Page) {
   expect(overflow.bodyScrollWidth).toBeLessThanOrEqual(overflow.bodyClientWidth + 1);
 }
 
+/** Seed enough PRs that the home list scrolls on mobile viewports. */
+export async function seedManyPrs(page: Page, count = 12) {
+  await assertMocksActive(page);
+  await page.evaluate((n) => {
+    const w = window as Window & { __e2eSeedMany?: (count: number) => void };
+    w.__e2eSeedMany?.(n);
+  }, count);
+  await waitForPrList(page);
+}
+
+/** Scroll the app shell to the bottom. */
+export async function scrollScrollRootToBottom(page: Page) {
+  await page.evaluate(async () => {
+    const root = document.querySelector<HTMLElement>("[data-scroll-root]");
+    if (!root) throw new Error("Scroll root not found");
+    root.scrollTop = root.scrollHeight;
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+  });
+}
+
+type BottomNavOverlap = {
+  ok: boolean;
+  bottom: number;
+  blockTop: number;
+  overlapPx: number;
+};
+
+/** True when the element's box ends above the bottom nav (and FAB overhang). */
+export async function getBottomNavOverlap(locator: Locator): Promise<BottomNavOverlap> {
+  return locator.evaluate((el) => {
+    const nav = document.querySelector<HTMLElement>("[data-testid=bottom-nav]");
+    if (!nav) {
+      return { ok: false, bottom: 0, blockTop: 0, overlapPx: 0 };
+    }
+    const fab = nav.querySelector<HTMLElement>('[class*="fab"]');
+    const navTop = nav.getBoundingClientRect().top;
+    const fabTop = fab?.getBoundingClientRect().top ?? navTop;
+    const blockTop = Math.min(navTop, fabTop);
+    const gap = 4;
+    const bottom = el.getBoundingClientRect().bottom;
+    const overlapPx = bottom - (blockTop - gap);
+    return {
+      ok: overlapPx <= 0,
+      bottom,
+      blockTop,
+      overlapPx,
+    };
+  });
+}
+
+export async function assertClearOfBottomNav(page: Page, locator: Locator) {
+  await scrollScrollRootToBottom(page);
+  const result = await getBottomNavOverlap(locator);
+  expect(
+    result.ok,
+    `Expected element bottom (${result.bottom}px) above nav zone (top ${result.blockTop}px); overlap ${result.overlapPx}px`
+  ).toBe(true);
+}
+
 /** Open the delete confirmation modal for the first PR card */
 export async function openDeleteModal(page: Page) {
   await page
@@ -104,13 +165,42 @@ export async function openDeleteModal(page: Page) {
 export async function ensureScrollable(page: Page) {
   await page.evaluate(() => {
     const SPACER_ID = "e2e-scroll-spacer";
-    if (!document.getElementById(SPACER_ID)) {
-      const spacer = document.createElement("div");
-      spacer.id = SPACER_ID;
-      spacer.style.height = "200vh";
-      document.body.appendChild(spacer);
+    if (document.getElementById(SPACER_ID)) return;
+
+    const target = document.querySelector("main") ?? document.body;
+    const spacer = document.createElement("div");
+    spacer.id = SPACER_ID;
+    spacer.style.height = "200vh";
+    target.appendChild(spacer);
+  });
+}
+
+/** Scroll a control above the fixed bottom nav (for nested shell scrolling). */
+export async function scrollClearOfBottomNav(page: Page, locator: Locator) {
+  await locator.evaluate((el) => {
+    const root = document.querySelector<HTMLElement>("[data-scroll-root]");
+    if (!root) return;
+    const nav = document.querySelector<HTMLElement>("[data-testid=bottom-nav]");
+    const navTop = nav?.getBoundingClientRect().top ?? window.innerHeight;
+    const clearance = 88;
+    const bottom = el.getBoundingClientRect().bottom;
+    if (bottom > navTop - clearance) {
+      root.scrollTop += bottom - navTop + clearance;
     }
   });
+}
+
+/** Click save after clearing the fixed bottom nav overlay. */
+export async function clickSaveButton(page: Page) {
+  const save = page.getByRole("button", { name: /save|שמור/i });
+  await scrollClearOfBottomNav(page, save);
+  await save.evaluate((el) => {
+    (el as HTMLButtonElement).click();
+  });
+}
+
+function scrollRootSelector() {
+  return "[data-scroll-root]";
 }
 
 type ScrollObservation = {
@@ -121,16 +211,17 @@ type ScrollObservation = {
 
 /** Read page title visibility via IntersectionObserver. */
 async function measureScroll(page: Page): Promise<ScrollObservation> {
-  return page.evaluate(async () => {
+  return page.evaluate(async (selector) => {
     const sentinel = document.querySelector("h1");
     if (!sentinel) {
       throw new Error("Scroll sentinel (h1) not found");
     }
 
-    const maxScroll = Math.max(
-      0,
-      document.documentElement.scrollHeight - window.innerHeight
-    );
+    const root =
+      document.querySelector<HTMLElement>(selector) ?? document.documentElement;
+    const maxScroll = Math.max(0, root.scrollHeight - root.clientHeight);
+    const scrollY =
+      root === document.documentElement ? window.scrollY : root.scrollTop;
 
     const intersectionRatio = await new Promise<number>((resolve) => {
       const io = new IntersectionObserver(
@@ -144,20 +235,27 @@ async function measureScroll(page: Page): Promise<ScrollObservation> {
     });
 
     return {
-      scrollY: window.scrollY,
+      scrollY,
       intersectionRatio,
       maxScroll,
     };
-  });
+  }, scrollRootSelector());
 }
 
 async function emulateWheelScroll(page: Page) {
   await page.evaluate(
-    () =>
+    (selector) =>
       new Promise<void>((resolve) => {
-        window.scrollTo(0, 0);
+        const root =
+          document.querySelector<HTMLElement>(selector) ?? document.documentElement;
+        if (root === document.documentElement) {
+          window.scrollTo(0, 0);
+        } else {
+          root.scrollTop = 0;
+        }
         requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-      })
+      }),
+    scrollRootSelector()
   );
 
   const viewport = page.viewportSize();

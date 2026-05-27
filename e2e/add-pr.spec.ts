@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { gotoApp, resetMockData } from "./helpers";
+import { gotoApp, resetMockData, clickSaveButton } from "./helpers";
 
 test.describe("Add PR flow", () => {
   test.beforeEach(async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe("Add PR flow", () => {
     await page.goto("/add/Back%20Squat");
     await page.locator("#weight").fill("120");
     await page.locator("#reps").fill("3");
-    await page.getByRole("button", { name: /save|שמור/i }).click();
+    await clickSaveButton(page);
     await expect(page).toHaveURL("/");
     await expect(page.getByText("120")).toBeVisible();
   });
@@ -35,7 +35,7 @@ test.describe("Add PR flow", () => {
     await page.goto("/add/Deadlift");
     await page.locator("#weight").fill("");
     await page.locator("#reps").fill("5");
-    await page.getByRole("button", { name: /save|שמור/i }).click();
+    await clickSaveButton(page);
     const valid = await page
       .locator("#weight")
       .evaluate((el: HTMLInputElement) => el.validity.valid);

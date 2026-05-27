@@ -11,18 +11,41 @@ type Props = {
 };
 
 const MODAL_BACK_STATE_KEY = "__myprModalBack";
+const SCROLL_ROOT_SELECTOR = "[data-scroll-root]";
 
-function lockScroll() {
+type ScrollLock = {
+  root: HTMLElement;
+  scrollY: number;
+};
+
+function getScrollRoot(): HTMLElement | null {
+  return document.querySelector<HTMLElement>(SCROLL_ROOT_SELECTOR);
+}
+
+function lockScroll(): ScrollLock {
+  const scrollRoot = getScrollRoot();
+  if (scrollRoot) {
+    const scrollY = scrollRoot.scrollTop;
+    scrollRoot.style.overflow = "hidden";
+    return { root: scrollRoot, scrollY };
+  }
+
   const scrollY = window.scrollY;
   document.documentElement.style.overflow = "hidden";
   document.body.style.overflow = "hidden";
   document.body.style.position = "fixed";
   document.body.style.top = `-${scrollY}px`;
   document.body.style.width = "100%";
-  return scrollY;
+  return { root: document.documentElement, scrollY };
 }
 
-function unlockScroll(scrollY: number) {
+function unlockScroll({ root, scrollY }: ScrollLock) {
+  if (root.matches(SCROLL_ROOT_SELECTOR)) {
+    root.style.overflow = "";
+    root.scrollTop = scrollY;
+    return;
+  }
+
   document.documentElement.style.overflow = "";
   document.body.style.overflow = "";
   document.body.style.position = "";
@@ -58,7 +81,7 @@ export function GlobalModal({
       window.addEventListener("popstate", onPopState);
     }
 
-    const lockedScrollY = blockScroll ? lockScroll() : null;
+    const scrollLock = blockScroll ? lockScroll() : null;
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
@@ -76,8 +99,8 @@ export function GlobalModal({
           window.history.back();
         }
       }
-      if (blockScroll && lockedScrollY !== null) {
-        unlockScroll(lockedScrollY);
+      if (blockScroll && scrollLock) {
+        unlockScroll(scrollLock);
       }
     };
   }, [blockScroll, closeOnBack, content, onClose]);

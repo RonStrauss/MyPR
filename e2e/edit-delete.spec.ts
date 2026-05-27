@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { gotoApp, resetMockData } from "./helpers";
+import { gotoApp, resetMockData, clickSaveButton } from "./helpers";
 
 test.describe("Edit and delete PRs", () => {
   test.beforeEach(async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe("Edit and delete PRs", () => {
     const deadliftCard = page.getByTestId("pr-card").filter({ hasText: "Deadlift" });
     await deadliftCard.getByRole("button", { name: /^Edit$|^ערוך$/i }).click();
     await page.locator("#weight").fill("150");
-    await page.getByRole("button", { name: /save|שמור/i }).click();
+    await clickSaveButton(page);
     await expect(page.getByText("150")).toBeVisible();
   });
 

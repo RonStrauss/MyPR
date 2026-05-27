@@ -16,6 +16,8 @@
   --font-body: "Heebo", system-ui, sans-serif;
   --nav-height: 64px;
   --header-height: 56px;
+  /* Fixed bottom nav + elevated FAB — keep scrollable content clear */
+  --layout-bottom-inset: calc(var(--nav-height) + 0.2rem);
 }
 
 *,
@@ -27,10 +29,13 @@
 }
 
 html,
-body,
-#root {
+body {
   min-height: 100%;
   overflow-x: hidden;
+}
+
+#root {
+  min-height: 100%;
 }
 
 body {

@@ -70,6 +70,21 @@ export function deleteRecord(id: string) {
   notify();
 }
 
+/** Seed many PRs so list pages scroll (e2e layout tests). */
+export function seedMany(count: number) {
+  _records = Array.from({ length: count }, (_, i) => ({
+    id: `seed-many-${i}`,
+    exercise: `Lift ${i + 1}`,
+    weightKg: 80 + (i % 40),
+    reps: 3 + (i % 5),
+    date: `2025-${String((i % 12) + 1).padStart(2, "0")}-15`,
+    isPublic: i % 3 === 0,
+    createdAt: Date.now() - i * 60_000,
+  }));
+  _nextId = 1000 + count;
+  notify();
+}
+
 /** Reset to seed data between tests (called via window.__e2eReset) */
 export function reset() {
   _records = [

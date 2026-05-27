@@ -1,23 +1,28 @@
 .shell {
   min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   max-width: 480px;
   margin: 0 auto;
-  padding-bottom: var(--nav-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-bottom: var(--layout-bottom-inset);
 }
 
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: var(--header-height);
   padding: 0 1rem;
   background: rgba(13, 13, 15, 0.85);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -41,8 +46,16 @@
 }
 
 .main {
-  flex: 1;
+  /* basis auto so content height drives shell scroll (not flex-basis 0%) */
+  flex: 1 0 auto;
+  min-height: 0;
   padding: 1rem;
+}
+
+.scrollBottomSpacer {
+  flex-shrink: 0;
+  height: var(--layout-bottom-inset);
+  pointer-events: none;
 }
 
 .bottomNav {

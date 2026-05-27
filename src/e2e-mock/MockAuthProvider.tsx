@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import type { User } from "firebase/auth";
-import { MOCK_USER, reset } from "./store";
+import { MOCK_USER, reset, seedMany } from "./store";
 
 type AuthContextValue = {
   user: User | null;
@@ -27,8 +27,13 @@ function E2eAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(MOCK_USER as unknown as User);
 
   useEffect(() => {
-    const w = window as Window & { __e2eReset?: () => void; __e2eMock?: boolean };
+    const w = window as Window & {
+      __e2eReset?: () => void;
+      __e2eSeedMany?: (count: number) => void;
+      __e2eMock?: boolean;
+    };
     w.__e2eReset = reset;
+    w.__e2eSeedMany = seedMany;
     w.__e2eMock = true;
   }, []);
 

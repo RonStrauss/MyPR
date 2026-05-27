@@ -9,7 +9,7 @@ export function Layout() {
   const location = useLocation();
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} data-scroll-root>
       <header className={styles.header}>
         <div className={styles.logo}>
           <img src="/dumbbell-transparent-bg.svg" alt="" className={styles.logoIcon} />
@@ -23,6 +23,8 @@ export function Layout() {
           <Outlet />
         </div>
       </main>
+
+      <div className={styles.scrollBottomSpacer} data-testid="scroll-bottom-spacer" aria-hidden />
 
       <nav className={styles.bottomNav} data-testid="bottom-nav">
         <NavLink
@@ -63,7 +65,7 @@ export function AuthLayout() {
   const { t } = useTranslation();
 
   return (
-    <div className={styles.shell} style={{ paddingBottom: 0 }}>
+    <div className={styles.shell} data-scroll-root style={{ paddingBottom: 0 }}>
       <header className={styles.header}>
         <div className={styles.logo}>
           <img src="/dumbbell-transparent-bg.svg" alt="" className={styles.logoIcon} />

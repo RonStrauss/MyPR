@@ -126,7 +126,7 @@ export function StatisticsPage() {
               {groupStats.map((g) => {
                 const best = g.best;
                 return (
-                  <li key={g.id} className={styles.groupCard}>
+                  <li key={g.id} className={styles.groupCard} data-testid="stats-group-card">
                     <div className={styles.groupTop}>
                       <span className={styles.groupName}>{t(g.labelKey)}</span>
                       <span className={styles.groupCount}>
