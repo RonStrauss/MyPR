@@ -10,12 +10,7 @@ type Props = {
   onConfirm: () => Promise<void>;
 };
 
-export function DeletePrConfirmModal({
-  exercise,
-  weightKg,
-  reps,
-  onConfirm,
-}: Props) {
+export function DeletePrConfirmModal({ exercise, weightKg, reps, onConfirm }: Props) {
   const { t } = useTranslation();
   const { closeModal } = useModal();
   const [submitting, setSubmitting] = useState(false);

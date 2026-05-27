@@ -27,7 +27,13 @@ export default tseslint.config(
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
       "react-hooks/set-state-in-effect": "off",
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "react-refresh/only-export-components": [
+        "warn",
+        {
+          allowConstantExport: true,
+          allowExportNames: ["useAuth", "useModal"],
+        },
+      ],
     },
   },
   {

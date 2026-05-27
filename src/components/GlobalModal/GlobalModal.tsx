@@ -54,10 +54,7 @@ export function GlobalModal({
 
     document.addEventListener("keydown", onKeyDown);
     if (closeOnBack) {
-      window.history.pushState(
-        { [MODAL_BACK_STATE_KEY]: true, id: backStateId },
-        ""
-      );
+      window.history.pushState({ [MODAL_BACK_STATE_KEY]: true, id: backStateId }, "");
       window.addEventListener("popstate", onPopState);
     }
 
@@ -67,9 +64,10 @@ export function GlobalModal({
       document.removeEventListener("keydown", onKeyDown);
       if (closeOnBack) {
         window.removeEventListener("popstate", onPopState);
-        const state = window.history.state as
-          | { [MODAL_BACK_STATE_KEY]?: boolean; id?: number }
-          | null;
+        const state = window.history.state as {
+          [MODAL_BACK_STATE_KEY]?: boolean;
+          id?: number;
+        } | null;
         if (
           !closedByBack &&
           state?.[MODAL_BACK_STATE_KEY] === true &&
