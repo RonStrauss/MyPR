@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay/CelebrationOverlay";
+import { DeletePrConfirmModal } from "@/components/DeletePrConfirmModal/DeletePrConfirmModal";
 import { Loader } from "@/components/Loader/Loader";
 import { PercentageCalculator } from "@/components/PercentageCalculator/PercentageCalculator";
 import { PrCard } from "@/components/PrCard/PrCard";
@@ -73,9 +74,16 @@ export function HomePage() {
     );
   }
 
-  async function handleDelete(record: PrRecord) {
-    if (!user || !confirm(t("pr.confirmDelete"))) return;
-    await deletePr(user.uid, record.id);
+  function handleDelete(record: PrRecord) {
+    if (!user) return;
+    openModal(
+      <DeletePrConfirmModal
+        exercise={record.exercise}
+        weightKg={record.weightKg}
+        reps={record.reps}
+        onConfirm={() => deletePr(user.uid, record.id)}
+      />
+    );
   }
 
   async function handleEditSubmit(data: PrInput) {

@@ -45,7 +45,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npx vite --port 5173 --strictPort",
+    // Avoid `npx` wrapper here; Playwright terminates direct node child reliably on Windows.
+    command: "node ./node_modules/vite/bin/vite.js --port 5173 --strictPort",
     url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,

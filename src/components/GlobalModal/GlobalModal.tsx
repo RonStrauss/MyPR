@@ -6,24 +6,81 @@ import styles from "./GlobalModal.module.css";
 type Props = {
   content: ReactNode | null;
   onClose: () => void;
+  closeOnBack?: boolean;
+  blockScroll?: boolean;
 };
 
-export function GlobalModal({ content, onClose }: Props) {
+const MODAL_BACK_STATE_KEY = "__myprModalBack";
+
+function lockScroll() {
+  const scrollY = window.scrollY;
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.width = "100%";
+  return scrollY;
+}
+
+function unlockScroll(scrollY: number) {
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  window.scrollTo(0, scrollY);
+}
+
+export function GlobalModal({
+  content,
+  onClose,
+  closeOnBack = false,
+  blockScroll = true,
+}: Props) {
   const { t } = useTranslation();
 
   useEffect(() => {
     if (!content) return;
+    let closedByBack = false;
+    const backStateId = Date.now();
+
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
+    function onPopState() {
+      closedByBack = true;
+      onClose();
+    }
+
     document.addEventListener("keydown", onKeyDown);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (closeOnBack) {
+      window.history.pushState({ [MODAL_BACK_STATE_KEY]: true, id: backStateId }, "");
+      window.addEventListener("popstate", onPopState);
+    }
+
+    const lockedScrollY = blockScroll ? lockScroll() : null;
+
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = prev;
+      if (closeOnBack) {
+        window.removeEventListener("popstate", onPopState);
+        const state = window.history.state as {
+          [MODAL_BACK_STATE_KEY]?: boolean;
+          id?: number;
+        } | null;
+        if (
+          !closedByBack &&
+          state?.[MODAL_BACK_STATE_KEY] === true &&
+          state.id === backStateId
+        ) {
+          window.history.back();
+        }
+      }
+      if (blockScroll && lockedScrollY !== null) {
+        unlockScroll(lockedScrollY);
+      }
     };
-  }, [content, onClose]);
+  }, [blockScroll, closeOnBack, content, onClose]);
 
   if (!content) return null;
 

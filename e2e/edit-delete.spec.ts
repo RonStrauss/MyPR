@@ -28,12 +28,24 @@ test.describe("Edit and delete PRs", () => {
   });
 
   test("delete removes the card after confirmation", async ({ page }) => {
-    page.on("dialog", (dialog) => dialog.accept());
     const deleteBtn = page
       .getByTestId("pr-card")
       .first()
       .getByRole("button", { name: /Delete|מחק/i });
     await deleteBtn.click();
+    const confirmDialog = page.getByRole("dialog");
+    await expect(
+      confirmDialog.getByText(/Delete this record\?|למחוק את השיא הזה\?/)
+    ).toBeVisible();
+    await confirmDialog.getByRole("button", { name: /Delete|מחק/i }).click();
     await expect(page.locator('[class*="statBoxValue"]').first()).toHaveText("1");
+  });
+
+  test("delete cancel keeps the card", async ({ page }) => {
+    const firstCard = page.getByTestId("pr-card").first();
+    await firstCard.getByRole("button", { name: /Delete|מחק/i }).click();
+    const confirmDialog = page.getByRole("dialog");
+    await confirmDialog.getByRole("button", { name: /Cancel|ביטול/i }).click();
+    await expect(page.getByTestId("pr-card")).toHaveCount(2);
   });
 });

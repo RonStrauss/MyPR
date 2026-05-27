@@ -90,6 +90,119 @@ export async function assertNoHorizontalOverflow(page: Page) {
   expect(overflow.bodyScrollWidth).toBeLessThanOrEqual(overflow.bodyClientWidth + 1);
 }
 
+/** Open the delete confirmation modal for the first PR card */
+export async function openDeleteModal(page: Page) {
+  await page
+    .getByTestId("pr-card")
+    .first()
+    .getByRole("button", { name: /Delete|מחק/i })
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+}
+
+/** Add room below the page so scroll behavior can be exercised in e2e. */
+export async function ensureScrollable(page: Page) {
+  await page.evaluate(() => {
+    const SPACER_ID = "e2e-scroll-spacer";
+    if (!document.getElementById(SPACER_ID)) {
+      const spacer = document.createElement("div");
+      spacer.id = SPACER_ID;
+      spacer.style.height = "200vh";
+      document.body.appendChild(spacer);
+    }
+  });
+}
+
+type ScrollObservation = {
+  scrollY: number;
+  intersectionRatio: number;
+  maxScroll: number;
+};
+
+/** Read page title visibility via IntersectionObserver. */
+async function measureScroll(page: Page): Promise<ScrollObservation> {
+  return page.evaluate(async () => {
+    const sentinel = document.querySelector("h1");
+    if (!sentinel) {
+      throw new Error("Scroll sentinel (h1) not found");
+    }
+
+    const maxScroll = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight
+    );
+
+    const intersectionRatio = await new Promise<number>((resolve) => {
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          io.disconnect();
+          resolve(entry?.intersectionRatio ?? 0);
+        },
+        { threshold: [0, 0.25, 0.5, 0.75, 1] }
+      );
+      io.observe(sentinel);
+    });
+
+    return {
+      scrollY: window.scrollY,
+      intersectionRatio,
+      maxScroll,
+    };
+  });
+}
+
+async function emulateWheelScroll(page: Page) {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        window.scrollTo(0, 0);
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      })
+  );
+
+  const viewport = page.viewportSize();
+  const x = (viewport?.width ?? 400) / 2;
+  const y = (viewport?.height ?? 800) / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.wheel(0, 800);
+  await page.mouse.wheel(0, 800);
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      })
+  );
+}
+
+/** Emulate user scroll with the mouse wheel and compare sentinel visibility. */
+async function attemptScroll(page: Page): Promise<{
+  before: ScrollObservation;
+  after: ScrollObservation;
+}> {
+  const before = await measureScroll(page);
+  await emulateWheelScroll(page);
+  const after = await measureScroll(page);
+  return { before, after };
+}
+
+/** Background scroll should not move while a scroll-blocking modal is open. */
+export async function assertScrollBlocked(page: Page) {
+  const { before, after } = await attemptScroll(page);
+  expect(after.intersectionRatio).toBeCloseTo(before.intersectionRatio, 1);
+}
+
+/** Background scroll should work again after the modal closes. */
+export async function assertScrollUnblocked(page: Page) {
+  const baseline = await measureScroll(page);
+  expect(baseline.maxScroll).toBeGreaterThan(100);
+
+  const { before, after } = await attemptScroll(page);
+  const scrolled =
+    after.scrollY > before.scrollY + 20 ||
+    after.intersectionRatio < before.intersectionRatio - 0.05;
+  expect(scrolled).toBe(true);
+}
+
 /** Filter panel bottom stays above the bottom nav and can scroll to the end */
 export async function assertFilterPanelAboveBottomNav(page: Page) {
   const panel = page.getByTestId("filters-panel");
