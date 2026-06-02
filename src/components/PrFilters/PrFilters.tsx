@@ -8,6 +8,7 @@ import {
   DEFAULT_PR_FILTERS,
   countActiveFilters,
   hasActiveFilters,
+  uiFilters,
   type PrFiltersState,
 } from "@/lib/prFilters";
 import styles from "./PrFilters.module.css";
@@ -45,7 +46,7 @@ export function PrFilters({
 }: Props) {
   const { t, i18n } = useTranslation();
   const panelDir = i18n.dir();
-  const safeFilters = FEATURES.visibility ? filters : { ...filters, visibility: "all" };
+  const safeFilters = uiFilters(filters);
   const active = hasActiveFilters(safeFilters);
   const activeCount = countActiveFilters(safeFilters);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -162,14 +163,7 @@ export function PrFilters({
               <button
                 type="button"
                 className={styles.clearBtn}
-                onClick={() =>
-                  onChange({
-                    ...DEFAULT_PR_FILTERS,
-                    visibility: FEATURES.visibility
-                      ? DEFAULT_PR_FILTERS.visibility
-                      : "all",
-                  })
-                }
+                onClick={() => onChange(uiFilters(DEFAULT_PR_FILTERS))}
               >
                 <X size={14} />
                 {t("filters.clear")}

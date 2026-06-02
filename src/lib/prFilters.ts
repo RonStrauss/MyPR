@@ -24,6 +24,12 @@ export const DEFAULT_PR_FILTERS: PrFiltersState = {
   withCommentsOnly: false,
 };
 
+/** Normalize filters for UI when visibility feature is disabled. */
+export function uiFilters(filters: PrFiltersState): PrFiltersState {
+  if (FEATURES.visibility) return filters;
+  return { ...filters, visibility: "all" };
+}
+
 export function hasActiveFilters(filters: PrFiltersState): boolean {
   return countActiveFilters(filters) > 0;
 }
