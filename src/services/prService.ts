@@ -10,6 +10,7 @@ import {
   updateDoc,
   type Unsubscribe,
 } from "firebase/firestore";
+import { FEATURES } from "@/config/features";
 import { db } from "@/lib/firebase";
 import { validatePrInput, type ValidationErrorCode } from "@/lib/validation";
 import type { PrInput, PrRecord } from "@/types/pr";
@@ -25,7 +26,8 @@ export class PrValidationError extends Error {
 }
 
 function assertValidInput(input: PrInput): PrInput {
-  const result = validatePrInput(input);
+  const gated: PrInput = FEATURES.visibility ? input : { ...input, isPublic: false };
+  const result = validatePrInput(gated);
   if (!result.ok) throw new PrValidationError(result.code);
   return result.value;
 }

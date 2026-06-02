@@ -5,6 +5,7 @@ declare const __APP_VERSION__: string;
 
 interface ImportMetaEnv {
   readonly VITE_E2E_MOCK?: string;
+  readonly VITE_ENABLE_VISIBILITY?: string;
   readonly VITE_FIREBASE_API_KEY: string;
   readonly VITE_FIREBASE_AUTH_DOMAIN: string;
   readonly VITE_FIREBASE_PROJECT_ID: string;
