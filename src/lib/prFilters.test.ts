@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { FEATURES } from "@/config/features";
 import { applyPrFilters, countActiveFilters, DEFAULT_PR_FILTERS } from "./prFilters";
 import type { PrRecord } from "@/types/pr";
 
@@ -67,16 +68,14 @@ describe("applyPrFilters", () => {
   });
 
   it("filters public and with comments", () => {
+    // Visibility filtering is gated behind a feature flag.
+    // When disabled, "public/private" behaves like "all".
     const result = applyPrFilters(
       records,
-      {
-        ...DEFAULT_PR_FILTERS,
-        visibility: "public",
-        withCommentsOnly: true,
-      },
+      { ...DEFAULT_PR_FILTERS, visibility: "public", withCommentsOnly: true },
       bestIds
     );
-    expect(result).toHaveLength(0);
+    expect(result).toHaveLength(FEATURES.visibility ? 0 : 1);
 
     const withNotes = applyPrFilters(
       records,

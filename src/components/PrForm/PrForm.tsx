@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader } from "@/components/Loader/Loader";
+import { FEATURES } from "@/config/features";
 import { validatePrInput, type ValidationErrorCode } from "@/lib/validation";
 import { PrValidationError } from "@/services/prService";
 import type { PrInput, PrRecord } from "@/types/pr";
@@ -68,7 +69,7 @@ export function PrForm({
       reps: repCount,
       date,
       notes: notes.trim() || undefined,
-      isPublic,
+      isPublic: FEATURES.visibility ? isPublic : false,
     });
 
     if (!result.ok) {
@@ -181,23 +182,25 @@ export function PrForm({
         />
       </div>
 
-      <div className={styles.visibility}>
-        <div className={styles.visibilityText}>
-          <span className={styles.visibilityLabel}>{t("pr.visibility")}</span>
-          <span className={styles.visibilityHint}>
-            {isPublic ? t("pr.visibilityPublicHint") : t("pr.visibilityPrivateHint")}
-          </span>
+      {FEATURES.visibility && (
+        <div className={styles.visibility}>
+          <div className={styles.visibilityText}>
+            <span className={styles.visibilityLabel}>{t("pr.visibility")}</span>
+            <span className={styles.visibilityHint}>
+              {isPublic ? t("pr.visibilityPublicHint") : t("pr.visibilityPrivateHint")}
+            </span>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isPublic}
+            className={`${styles.toggle} ${isPublic ? styles.toggleOn : ""}`}
+            onClick={() => setIsPublic((v) => !v)}
+          >
+            <span className={styles.toggleThumb} />
+          </button>
         </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={isPublic}
-          className={`${styles.toggle} ${isPublic ? styles.toggleOn : ""}`}
-          onClick={() => setIsPublic((v) => !v)}
-        >
-          <span className={styles.toggleThumb} />
-        </button>
-      </div>
+      )}
 
       {error && <p className="error-text">{error}</p>}
 

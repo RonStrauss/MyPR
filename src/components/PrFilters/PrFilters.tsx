@@ -2,6 +2,7 @@ import { Filter, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Select } from "@/components/Select/Select";
+import { FEATURES } from "@/config/features";
 import { EXERCISE_GROUPS } from "@/lib/statistics";
 import {
   DEFAULT_PR_FILTERS,
@@ -44,8 +45,9 @@ export function PrFilters({
 }: Props) {
   const { t, i18n } = useTranslation();
   const panelDir = i18n.dir();
-  const active = hasActiveFilters(filters);
-  const activeCount = countActiveFilters(filters);
+  const safeFilters = FEATURES.visibility ? filters : { ...filters, visibility: "all" };
+  const active = hasActiveFilters(safeFilters);
+  const activeCount = countActiveFilters(safeFilters);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -94,7 +96,7 @@ export function PrFilters({
   }, [open, onOpenChange]);
 
   function patch(partial: Partial<PrFiltersState>) {
-    const next = { ...filters, ...partial };
+    const next = { ...safeFilters, ...partial };
     if (partial.groupId !== undefined && partial.groupId !== filters.groupId) {
       next.exercise = "";
     }
@@ -160,7 +162,14 @@ export function PrFilters({
               <button
                 type="button"
                 className={styles.clearBtn}
-                onClick={() => onChange({ ...DEFAULT_PR_FILTERS })}
+                onClick={() =>
+                  onChange({
+                    ...DEFAULT_PR_FILTERS,
+                    visibility: FEATURES.visibility
+                      ? DEFAULT_PR_FILTERS.visibility
+                      : "all",
+                  })
+                }
               >
                 <X size={14} />
                 {t("filters.clear")}
@@ -217,21 +226,23 @@ export function PrFilters({
             </div>
           </div>
 
-          <div className={styles.field}>
-            <label className="label" htmlFor="filter-visibility">
-              {t("filters.visibility")}
-            </label>
-            <Select
-              id="filter-visibility"
-              value={filters.visibility}
-              onValueChange={(visibility) =>
-                patch({
-                  visibility: visibility as PrFiltersState["visibility"],
-                })
-              }
-              options={visibilityOptions}
-            />
-          </div>
+          {FEATURES.visibility && (
+            <div className={styles.field}>
+              <label className="label" htmlFor="filter-visibility">
+                {t("filters.visibility")}
+              </label>
+              <Select
+                id="filter-visibility"
+                value={filters.visibility}
+                onValueChange={(visibility) =>
+                  patch({
+                    visibility: visibility as PrFiltersState["visibility"],
+                  })
+                }
+                options={visibilityOptions}
+              />
+            </div>
+          )}
 
           <div className={styles.checks}>
             <label className={styles.checkLabel}>

@@ -24,7 +24,11 @@ export function Layout() {
         </div>
       </main>
 
-      <div className={styles.scrollBottomSpacer} data-testid="scroll-bottom-spacer" aria-hidden />
+      <div
+        className={styles.scrollBottomSpacer}
+        data-testid="scroll-bottom-spacer"
+        aria-hidden
+      />
 
       <nav className={styles.bottomNav} data-testid="bottom-nav">
         <NavLink

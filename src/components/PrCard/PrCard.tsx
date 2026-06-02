@@ -1,5 +1,6 @@
 import { Globe, Percent, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { FEATURES } from "@/config/features";
 import type { PrRecord } from "@/types/pr";
 import styles from "./PrCard.module.css";
 
@@ -25,7 +26,7 @@ export function PrCard({ record, isBestPr, onEdit, onDelete, onCalculator }: Pro
       <div className={styles.top}>
         <h3 className={styles.exercise}>{record.exercise}</h3>
         <div className={styles.badges}>
-          {record.isPublic && (
+          {FEATURES.visibility && record.isPublic && (
             <span className={styles.publicBadge} title={t("pr.publicBadge")}>
               <Globe size={12} />
             </span>

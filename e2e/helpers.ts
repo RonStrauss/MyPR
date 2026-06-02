@@ -220,8 +220,7 @@ async function measureScroll(page: Page): Promise<ScrollObservation> {
     const root =
       document.querySelector<HTMLElement>(selector) ?? document.documentElement;
     const maxScroll = Math.max(0, root.scrollHeight - root.clientHeight);
-    const scrollY =
-      root === document.documentElement ? window.scrollY : root.scrollTop;
+    const scrollY = root === document.documentElement ? window.scrollY : root.scrollTop;
 
     const intersectionRatio = await new Promise<number>((resolve) => {
       const io = new IntersectionObserver(

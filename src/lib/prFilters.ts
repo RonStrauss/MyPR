@@ -1,4 +1,5 @@
 import { EXERCISE_GROUPS } from "@/lib/statistics";
+import { FEATURES } from "@/config/features";
 import type { PrRecord } from "@/types/pr";
 
 export type VisibilityFilter = "all" | "public" | "private";
@@ -34,7 +35,7 @@ export function countActiveFilters(filters: PrFiltersState): number {
   if (filters.dateFrom !== "") count++;
   if (filters.dateTo !== "") count++;
   if (filters.onlyHighest) count++;
-  if (filters.visibility !== "all") count++;
+  if (FEATURES.visibility && filters.visibility !== "all") count++;
   if (filters.withCommentsOnly) count++;
   return count;
 }
@@ -57,8 +58,10 @@ export function applyPrFilters(
     if (filters.dateFrom && record.date < filters.dateFrom) return false;
     if (filters.dateTo && record.date > filters.dateTo) return false;
     if (filters.onlyHighest && !bestPrIds.has(record.id)) return false;
-    if (filters.visibility === "public" && !record.isPublic) return false;
-    if (filters.visibility === "private" && record.isPublic) return false;
+    if (FEATURES.visibility) {
+      if (filters.visibility === "public" && !record.isPublic) return false;
+      if (filters.visibility === "private" && record.isPublic) return false;
+    }
     if (filters.withCommentsOnly && !record.notes?.trim()) return false;
     return true;
   });
