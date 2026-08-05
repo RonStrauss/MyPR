@@ -18,6 +18,29 @@
   --header-height: 56px;
   /* Fixed bottom nav + elevated FAB — keep scrollable content clear */
   --layout-bottom-inset: calc(var(--nav-height) + 0.2rem);
+  /* Desktop side-rail width and content caps (see breakpoints below) */
+  --rail-width: 220px;
+  --content-max: 1180px;
+  --chart-max-height: 360px;
+}
+
+/**
+ * Responsive tiers.
+ *
+ * Custom properties cannot be used inside `@media` conditions, so the two
+ * crossover values are written as literals wherever they appear. This block is
+ * the source of truth — keep every `min-width` in the codebase aligned with it.
+ *
+ *   mobile   < 768px   bottom nav + FAB, single column        (unchanged)
+ *   tablet   >= 768px   bottom nav + FAB, 2-column content
+ *   desktop  >= 1024px  side rail, edit panel, multi-column
+ */
+
+/* Desktop: the nav becomes a full-height side rail, so content needs no bottom inset. */
+@media (min-width: 1024px) {
+  :root {
+    --layout-bottom-inset: 0px;
+  }
 }
 
 *,

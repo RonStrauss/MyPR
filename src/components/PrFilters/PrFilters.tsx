@@ -61,9 +61,23 @@ export function PrFilters({
       const el = panelRef.current;
       if (!el) return;
       const top = el.getBoundingClientRect().top;
-      const nav = document.querySelector('[data-testid="bottom-nav"]');
-      const navTop = nav?.getBoundingClientRect().top ?? window.innerHeight;
-      const max = Math.max(140, navTop - top - 8);
+      const scrollRoot = el.closest<HTMLElement>("[data-scroll-root]");
+      const rootBottom =
+        scrollRoot?.getBoundingClientRect().bottom ?? window.innerHeight;
+
+      /**
+       * The nav constrains the panel only while it sits *below* it (bottom-bar mode).
+       * As a full-height side rail its top edge is near 0, which would otherwise
+       * collapse the panel to the 140px floor.
+       */
+      const nav = document.querySelector<HTMLElement>("[data-primary-nav]");
+      const navTop = nav?.getBoundingClientRect().top;
+      const bottom =
+        navTop !== undefined && navTop > top
+          ? Math.min(rootBottom, navTop)
+          : rootBottom;
+
+      const max = Math.max(140, bottom - top - 8);
       el.style.maxHeight = `${max}px`;
     }
 
