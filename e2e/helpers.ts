@@ -205,8 +205,32 @@ export async function getBottomNavOverlap(locator: Locator): Promise<BottomNavOv
   );
 }
 
+/**
+ * Wait for entry animations to finish so geometry is measured at rest.
+ * `listItemEnter` translates cards by 8px, which made overlap assertions flaky by
+ * ~2px when they happened to run mid-animation. Infinite animations (spinners) are
+ * skipped, and the whole wait is bounded so a stuck animation cannot hang a test.
+ */
+export async function waitForAnimationsToSettle(page: Page, timeoutMs = 2000) {
+  await page.evaluate(async (limit) => {
+    const settled = document
+      .getAnimations()
+      .filter((animation) => {
+        const timing = (animation.effect as KeyframeEffect | null)?.getTiming();
+        return timing?.iterations !== Number.POSITIVE_INFINITY;
+      })
+      .map((animation) => animation.finished.catch(() => undefined));
+
+    await Promise.race([
+      Promise.all(settled),
+      new Promise((resolve) => setTimeout(resolve, limit)),
+    ]);
+  }, timeoutMs);
+}
+
 export async function assertClearOfBottomNav(page: Page, locator: Locator) {
   await scrollScrollRootToBottom(page);
+  await waitForAnimationsToSettle(page);
   const result = await getBottomNavOverlap(locator);
   expect(
     result.ok,
