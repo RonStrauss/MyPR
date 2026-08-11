@@ -1,6 +1,17 @@
+/**
+ * Column layout so that when the grid stretches a card to its row height
+ * (a sibling with notes is taller), the extra space lands in .body and the
+ * action rows stay aligned across the row instead of leaving a gutter.
+ */
 .card {
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  flex: 1;
 }
 
 .card::before {

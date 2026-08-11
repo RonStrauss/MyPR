@@ -175,7 +175,7 @@ export function HomePage() {
           {filteredRecords.map((record, index) => (
             <div
               key={record.id}
-              className="list-item-enter"
+              className={`list-item-enter ${styles.listItem}`}
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <PrCard

@@ -23,29 +23,31 @@ export function PrCard({ record, isBestPr, onEdit, onDelete, onCalculator }: Pro
 
   return (
     <article className={`card ${styles.card}`} data-testid="pr-card">
-      <div className={styles.top}>
-        <h3 className={styles.exercise}>{record.exercise}</h3>
-        <div className={styles.badges}>
-          {FEATURES.visibility && record.isPublic && (
-            <span className={styles.publicBadge} title={t("pr.publicBadge")}>
-              <Globe size={12} />
-            </span>
-          )}
-          {isBestPr && <span className={styles.badge}>PR</span>}
+      <div className={styles.body}>
+        <div className={styles.top}>
+          <h3 className={styles.exercise}>{record.exercise}</h3>
+          <div className={styles.badges}>
+            {FEATURES.visibility && record.isPublic && (
+              <span className={styles.publicBadge} title={t("pr.publicBadge")}>
+                <Globe size={12} />
+              </span>
+            )}
+            {isBestPr && <span className={styles.badge}>PR</span>}
+          </div>
         </div>
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <span className={styles.statValue}>{record.weightKg}</span>
+            <span className={styles.statLabel}>{t("units.kg")}</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statValue}>×{record.reps}</span>
+            <span className={styles.statLabel}>{t("units.reps")}</span>
+          </div>
+        </div>
+        <p className={styles.meta}>{formattedDate}</p>
+        {record.notes && <p className={styles.notes}>{record.notes}</p>}
       </div>
-      <div className={styles.stats}>
-        <div className={styles.stat}>
-          <span className={styles.statValue}>{record.weightKg}</span>
-          <span className={styles.statLabel}>{t("units.kg")}</span>
-        </div>
-        <div className={styles.stat}>
-          <span className={styles.statValue}>×{record.reps}</span>
-          <span className={styles.statLabel}>{t("units.reps")}</span>
-        </div>
-      </div>
-      <p className={styles.meta}>{formattedDate}</p>
-      {record.notes && <p className={styles.notes}>{record.notes}</p>}
       <div className={styles.actions}>
         <button
           type="button"

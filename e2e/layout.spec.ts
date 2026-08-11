@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator } from "@playwright/test";
 import {
   assertClearOfBottomNav,
   assertFilterPanelAboveBottomNav,
@@ -13,6 +13,28 @@ import {
 } from "./helpers";
 
 const ROUTES = ["/", "/add", "/stats"] as const;
+
+type Box = { top: number; height: number };
+
+async function getBoxes(locator: Locator): Promise<Box[]> {
+  return locator.evaluateAll((els) =>
+    els.map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { top: Math.round(rect.top), height: Math.round(rect.height) };
+    })
+  );
+}
+
+/** Split boxes into visual rows by their top edge (2px tolerance). */
+function groupIntoRows(boxes: Box[]): Box[][] {
+  const rows: Box[][] = [];
+  for (const box of [...boxes].sort((a, b) => a.top - b.top)) {
+    const row = rows[rows.length - 1];
+    if (row && Math.abs(row[0].top - box.top) <= 2) row.push(box);
+    else rows.push([box]);
+  }
+  return rows;
+}
 
 /** Tier boundaries — keep in sync with the media queries in src/styles/global.css. */
 const TABLET_MIN = 768;
@@ -110,6 +132,36 @@ test.describe("Layout — responsive tiers @layout", () => {
       // Below desktop, editing replaces the page exactly as it always has.
       await expect(page.getByTestId("pr-card").first()).toBeHidden();
     }
+  });
+
+  test("PR cards in a grid row share one height", async ({ page }) => {
+    await gotoApp(page);
+    // A count divisible by 2, 3 and 4 so every tier ends on a full row.
+    await seedManyPrs(page, 12);
+    const width = page.viewportSize()?.width ?? 0;
+    test.skip(width < TABLET_MIN, "single column has no row to equalise");
+
+    const rows = groupIntoRows(await getBoxes(page.getByTestId("pr-card")));
+    expect(rows.length).toBeGreaterThan(1);
+    for (const row of rows) {
+      expect(row.length).toBeGreaterThan(1);
+      const heights = row.map((box) => box.height);
+      expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test("statistics group cards are all the same size", async ({ page }) => {
+    await gotoApp(page);
+    await page.goto("/stats");
+    await page.locator("h1").first().waitFor();
+    const width = page.viewportSize()?.width ?? 0;
+    test.skip(width < TABLET_MIN, "single column has no row to equalise");
+
+    const boxes = await getBoxes(page.getByTestId("stats-group-card"));
+    // Groups with no lifts logged must not shrink and leave a hole in the grid.
+    expect(groupIntoRows(boxes).length).toBeGreaterThan(1);
+    const heights = boxes.map((box) => box.height);
+    expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
   });
 
   test("the overflow guard can actually fail", async ({ page }) => {

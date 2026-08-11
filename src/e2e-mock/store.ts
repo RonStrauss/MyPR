@@ -80,6 +80,9 @@ export function seedMany(count: number) {
     date: `2025-${String((i % 12) + 1).padStart(2, "0")}-15`,
     isPublic: i % 3 === 0,
     createdAt: Date.now() - i * 60_000,
+    // Every third card carries notes, so grid rows always mix tall and short
+    // cards — that is what the equal-height layout assertions need.
+    ...(i % 3 === 1 ? { notes: `Cycle week ${i + 1} test set` } : {}),
   }));
   _nextId = 1000 + count;
   notify();
