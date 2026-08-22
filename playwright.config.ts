@@ -26,8 +26,10 @@ export default defineConfig({
   reporter: process.env.CI ? "github" : "list",
   use: sharedUse,
   projects: [
+    /* Phone-class widths run the full suite. */
     {
-      name: "desktop",
+      // Was misleadingly named "desktop": 480px is the old mobile shell width.
+      name: "mobile-wide",
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 480, height: 900 },
@@ -42,6 +44,26 @@ export default defineConfig({
     {
       name: "mobile-narrow",
       use: narrowMobile,
+    },
+    /**
+     * Wider tiers run only layout-tagged specs — functional behaviour is already
+     * covered at phone widths, and `workers: 1` makes a full cross-product costly.
+     */
+    {
+      name: "tablet",
+      grep: /@layout/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 834, height: 1112 },
+      },
+    },
+    {
+      name: "desktop",
+      grep: /@layout/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 },
+      },
     },
   ],
   webServer: {

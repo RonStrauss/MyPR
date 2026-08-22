@@ -92,111 +92,113 @@ export function HomePage() {
     setEditing(null);
   }
 
-  if (editing) {
-    return (
-      <PrForm
-        initial={editing}
-        onSubmit={handleEditSubmit}
-        onCancel={() => setEditing(null)}
-      />
-    );
-  }
-
   return (
-    <div>
-      {celebrationMsg && (
-        <CelebrationOverlay
-          message={celebrationMsg}
-          onDone={() => setCelebrationMsg(null)}
-        />
-      )}
-
-      <h1 className={styles.title}>{t("pr.title")}</h1>
-
-      {records.length > 0 && (
-        <>
-          <div className={styles.statsBar}>
-            <div className={styles.statBox}>
-              <div className={styles.statBoxValue}>
-                {filtersActive ? filteredRecords.length : records.length}
-              </div>
-              <div className={styles.statBoxLabel}>
-                {filtersActive ? t("filters.shown") : t("nav.records")}
-              </div>
-            </div>
-            {filtersActive && (
-              <div className={styles.statBox}>
-                <div className={styles.statBoxValue}>{records.length}</div>
-                <div className={styles.statBoxLabel}>{t("nav.records")}</div>
-              </div>
-            )}
-          </div>
-          <PrFilters
-            filters={filters}
-            exercises={exerciseOptions}
-            resultCount={filteredRecords.length}
-            totalCount={records.length}
-            open={filtersOpen}
-            onOpenChange={setFiltersOpen}
-            onChange={setFilters}
+    <div className={`${styles.layout} ${editing ? styles.layoutEditing : ""}`}>
+      <div className={styles.primary}>
+        {celebrationMsg && (
+          <CelebrationOverlay
+            message={celebrationMsg}
+            onDone={() => setCelebrationMsg(null)}
           />
-        </>
-      )}
+        )}
 
-      {loading && <Loader label={t("common.loading")} />}
+        <h1 className={styles.title}>{t("pr.title")}</h1>
 
-      {error && !loading && (
-        <p className="error-text" style={{ marginBottom: "1rem" }}>
-          {error}
-        </p>
-      )}
-
-      {!loading && !error && records.length === 0 && (
-        <div className={`${styles.empty} fade-in`}>
-          <Dumbbell className={styles.emptyIcon} />
-          <p>{t("pr.empty")}</p>
-          <button
-            type="button"
-            className="btn btn-primary"
-            style={{ marginTop: "1rem" }}
-            onClick={() => navigate("/add")}
-          >
-            {t("pr.add")}
-          </button>
-        </div>
-      )}
-
-      {!loading && !error && records.length > 0 && filteredRecords.length === 0 && (
-        <div className={styles.empty}>
-          <p>{t("filters.noResults")}</p>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ marginTop: "0.75rem" }}
-            onClick={() => setFilters({ ...DEFAULT_PR_FILTERS })}
-          >
-            {t("filters.clear")}
-          </button>
-        </div>
-      )}
-
-      <div className={styles.list}>
-        {filteredRecords.map((record, index) => (
-          <div
-            key={record.id}
-            className="list-item-enter"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <PrCard
-              record={record}
-              isBestPr={bestPrIds.has(record.id)}
-              onEdit={setEditing}
-              onDelete={handleDelete}
-              onCalculator={() => openCalculator(record)}
+        {records.length > 0 && (
+          <>
+            <div className={styles.statsBar}>
+              <div className={styles.statBox}>
+                <div className={styles.statBoxValue}>
+                  {filtersActive ? filteredRecords.length : records.length}
+                </div>
+                <div className={styles.statBoxLabel}>
+                  {filtersActive ? t("filters.shown") : t("nav.records")}
+                </div>
+              </div>
+              {filtersActive && (
+                <div className={styles.statBox}>
+                  <div className={styles.statBoxValue}>{records.length}</div>
+                  <div className={styles.statBoxLabel}>{t("nav.records")}</div>
+                </div>
+              )}
+            </div>
+            <PrFilters
+              filters={filters}
+              exercises={exerciseOptions}
+              resultCount={filteredRecords.length}
+              totalCount={records.length}
+              open={filtersOpen}
+              onOpenChange={setFiltersOpen}
+              onChange={setFilters}
             />
+          </>
+        )}
+
+        {loading && <Loader label={t("common.loading")} />}
+
+        {error && !loading && (
+          <p className="error-text" style={{ marginBottom: "1rem" }}>
+            {error}
+          </p>
+        )}
+
+        {!loading && !error && records.length === 0 && (
+          <div className={`${styles.empty} fade-in`}>
+            <Dumbbell className={styles.emptyIcon} />
+            <p>{t("pr.empty")}</p>
+            <button
+              type="button"
+              className="btn btn-primary"
+              style={{ marginTop: "1rem" }}
+              onClick={() => navigate("/add")}
+            >
+              {t("pr.add")}
+            </button>
           </div>
-        ))}
+        )}
+
+        {!loading && !error && records.length > 0 && filteredRecords.length === 0 && (
+          <div className={styles.empty}>
+            <p>{t("filters.noResults")}</p>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ marginTop: "0.75rem" }}
+              onClick={() => setFilters({ ...DEFAULT_PR_FILTERS })}
+            >
+              {t("filters.clear")}
+            </button>
+          </div>
+        )}
+
+        <div className={styles.list}>
+          {filteredRecords.map((record, index) => (
+            <div
+              key={record.id}
+              className={`list-item-enter ${styles.listItem}`}
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <PrCard
+                record={record}
+                isBestPr={bestPrIds.has(record.id)}
+                onEdit={setEditing}
+                onDelete={handleDelete}
+                onCalculator={() => openCalculator(record)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
+
+      {editing && (
+        <aside className={styles.editPanel} data-testid="edit-panel">
+          <PrForm
+            initial={editing}
+            onSubmit={handleEditSubmit}
+            onCancel={() => setEditing(null)}
+          />
+        </aside>
+      )}
     </div>
   );
 }

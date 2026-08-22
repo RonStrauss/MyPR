@@ -74,20 +74,71 @@ export async function pickFilterSelect(
   await page.getByRole("option", { name: optionLabel, exact: true }).click();
 }
 
-/** No document-level horizontal scroll */
+/** Selector for the primary nav, which renders as a bottom bar or a side rail. */
+export const PRIMARY_NAV = '[data-testid="primary-nav"]';
+
+/** Rail mode covers most of the viewport height; the bottom bar is ~64px tall. */
+const RAIL_HEIGHT_RATIO = 0.6;
+
+/**
+ * No horizontal overflow.
+ *
+ * The scroll container is `.shell` ([data-scroll-root]), NOT the document, and it
+ * sets `overflow-x: hidden` — so overflowing content is contained there and never
+ * widens documentElement/body. Asserting only on those made this check
+ * unfalsifiable: a 3000px-wide child still passed. The scroll-root assertion is
+ * the one that can actually fail.
+ */
 export async function assertNoHorizontalOverflow(page: Page) {
   const overflow = await page.evaluate(() => {
     const doc = document.documentElement;
     const body = document.body;
+    const root = document.querySelector<HTMLElement>("[data-scroll-root]");
     return {
       docScrollWidth: doc.scrollWidth,
       docClientWidth: doc.clientWidth,
       bodyScrollWidth: body.scrollWidth,
       bodyClientWidth: body.clientWidth,
+      rootScrollWidth: root?.scrollWidth ?? 0,
+      rootClientWidth: root?.clientWidth ?? 0,
+      hasRoot: Boolean(root),
     };
   });
+  expect(overflow.hasRoot, "scroll root [data-scroll-root] not found").toBe(true);
   expect(overflow.docScrollWidth).toBeLessThanOrEqual(overflow.docClientWidth + 1);
   expect(overflow.bodyScrollWidth).toBeLessThanOrEqual(overflow.bodyClientWidth + 1);
+  expect(
+    overflow.rootScrollWidth,
+    `Scroll root overflows: ${overflow.rootScrollWidth}px of content in a ${overflow.rootClientWidth}px box`
+  ).toBeLessThanOrEqual(overflow.rootClientWidth + 1);
+}
+
+/**
+ * How many items sit on the first row — i.e. the rendered column count.
+ * Compares rounded `top` offsets, so it works for both flex columns and grids.
+ */
+export async function countColumnsInFirstRow(locator: Locator): Promise<number> {
+  const tops = await locator.evaluateAll((els) =>
+    els.map((el) => Math.round(el.getBoundingClientRect().top))
+  );
+  if (tops.length === 0) return 0;
+  const firstRowTop = Math.min(...tops);
+  return tops.filter((top) => Math.abs(top - firstRowTop) <= 2).length;
+}
+
+/** Which mode the primary nav is currently rendering in. */
+export async function getNavMode(page: Page): Promise<"rail" | "bottom-bar"> {
+  return page.evaluate(
+    ([selector, ratio]) => {
+      const nav = document.querySelector<HTMLElement>(selector as string);
+      if (!nav) throw new Error("Primary nav not found");
+      const rect = nav.getBoundingClientRect();
+      return rect.height > window.innerHeight * (ratio as number)
+        ? ("rail" as const)
+        : ("bottom-bar" as const);
+    },
+    [PRIMARY_NAV, RAIL_HEIGHT_RATIO] as const
+  );
 }
 
 /** Seed enough PRs that the home list scrolls on mobile viewports. */
@@ -119,31 +170,67 @@ type BottomNavOverlap = {
   overlapPx: number;
 };
 
-/** True when the element's box ends above the bottom nav (and FAB overhang). */
+/**
+ * True when the element's box ends above the bottom nav (and FAB overhang).
+ * In rail mode the nav sits beside the content, so it cannot cover it vertically
+ * and the check passes trivially rather than failing on irrelevant geometry.
+ */
 export async function getBottomNavOverlap(locator: Locator): Promise<BottomNavOverlap> {
-  return locator.evaluate((el) => {
-    const nav = document.querySelector<HTMLElement>("[data-testid=bottom-nav]");
-    if (!nav) {
-      return { ok: false, bottom: 0, blockTop: 0, overlapPx: 0 };
-    }
-    const fab = nav.querySelector<HTMLElement>('[class*="fab"]');
-    const navTop = nav.getBoundingClientRect().top;
-    const fabTop = fab?.getBoundingClientRect().top ?? navTop;
-    const blockTop = Math.min(navTop, fabTop);
-    const gap = 4;
-    const bottom = el.getBoundingClientRect().bottom;
-    const overlapPx = bottom - (blockTop - gap);
-    return {
-      ok: overlapPx <= 0,
-      bottom,
-      blockTop,
-      overlapPx,
-    };
-  });
+  return locator.evaluate(
+    (el, [selector, ratio]) => {
+      const nav = document.querySelector<HTMLElement>(selector as string);
+      if (!nav) {
+        return { ok: false, bottom: 0, blockTop: 0, overlapPx: 0 };
+      }
+      const navRect = nav.getBoundingClientRect();
+      const bottom = el.getBoundingClientRect().bottom;
+
+      if (navRect.height > window.innerHeight * (ratio as number)) {
+        return { ok: true, bottom, blockTop: navRect.top, overlapPx: 0 };
+      }
+
+      const fab = nav.querySelector<HTMLElement>('[class*="fab"]');
+      const fabTop = fab?.getBoundingClientRect().top ?? navRect.top;
+      const blockTop = Math.min(navRect.top, fabTop);
+      const gap = 4;
+      const overlapPx = bottom - (blockTop - gap);
+      return {
+        ok: overlapPx <= 0,
+        bottom,
+        blockTop,
+        overlapPx,
+      };
+    },
+    [PRIMARY_NAV, RAIL_HEIGHT_RATIO] as const
+  );
+}
+
+/**
+ * Wait for entry animations to finish so geometry is measured at rest.
+ * `listItemEnter` translates cards by 8px, which made overlap assertions flaky by
+ * ~2px when they happened to run mid-animation. Infinite animations (spinners) are
+ * skipped, and the whole wait is bounded so a stuck animation cannot hang a test.
+ */
+export async function waitForAnimationsToSettle(page: Page, timeoutMs = 2000) {
+  await page.evaluate(async (limit) => {
+    const settled = document
+      .getAnimations()
+      .filter((animation) => {
+        const timing = (animation.effect as KeyframeEffect | null)?.getTiming();
+        return timing?.iterations !== Number.POSITIVE_INFINITY;
+      })
+      .map((animation) => animation.finished.catch(() => undefined));
+
+    await Promise.race([
+      Promise.all(settled),
+      new Promise((resolve) => setTimeout(resolve, limit)),
+    ]);
+  }, timeoutMs);
 }
 
 export async function assertClearOfBottomNav(page: Page, locator: Locator) {
   await scrollScrollRootToBottom(page);
+  await waitForAnimationsToSettle(page);
   const result = await getBottomNavOverlap(locator);
   expect(
     result.ok,
@@ -175,19 +262,30 @@ export async function ensureScrollable(page: Page) {
   });
 }
 
-/** Scroll a control above the fixed bottom nav (for nested shell scrolling). */
+/**
+ * Scroll a control clear of the fixed bottom nav (for nested shell scrolling).
+ * A side rail obstructs nothing vertically, so no clearance is applied in rail mode —
+ * treating a rail's top edge as the obstruction would scroll by a wrong, large amount.
+ */
 export async function scrollClearOfBottomNav(page: Page, locator: Locator) {
-  await locator.evaluate((el) => {
-    const root = document.querySelector<HTMLElement>("[data-scroll-root]");
-    if (!root) return;
-    const nav = document.querySelector<HTMLElement>("[data-testid=bottom-nav]");
-    const navTop = nav?.getBoundingClientRect().top ?? window.innerHeight;
-    const clearance = 88;
-    const bottom = el.getBoundingClientRect().bottom;
-    if (bottom > navTop - clearance) {
-      root.scrollTop += bottom - navTop + clearance;
-    }
-  });
+  await locator.evaluate(
+    (el, [selector, ratio]) => {
+      const root = document.querySelector<HTMLElement>("[data-scroll-root]");
+      if (!root) return;
+      const nav = document.querySelector<HTMLElement>(selector as string);
+      const navRect = nav?.getBoundingClientRect();
+      const isRail = navRect
+        ? navRect.height > window.innerHeight * (ratio as number)
+        : false;
+      const navTop = !navRect || isRail ? window.innerHeight : navRect.top;
+      const clearance = 88;
+      const bottom = el.getBoundingClientRect().bottom;
+      if (bottom > navTop - clearance) {
+        root.scrollTop += bottom - navTop + clearance;
+      }
+    },
+    [PRIMARY_NAV, RAIL_HEIGHT_RATIO] as const
+  );
 }
 
 /** Click save after clearing the fixed bottom nav overlay. */
@@ -300,30 +398,57 @@ export async function assertScrollUnblocked(page: Page) {
   expect(scrolled).toBe(true);
 }
 
-/** Filter panel bottom stays above the bottom nav and can scroll to the end */
+/**
+ * The filter panel stays inside the visible area — above the bottom bar when there
+ * is one, otherwise within the scroll root — and is never collapsed to the 140px
+ * floor while space is available.
+ */
 export async function assertFilterPanelAboveBottomNav(page: Page) {
   const panel = page.getByTestId("filters-panel");
   await expect(panel).toBeVisible();
 
-  const bounds = await page.evaluate(() => {
-    const panelEl = document.querySelector('[data-testid="filters-panel"]');
-    const navEl = document.querySelector('[data-testid="bottom-nav"]');
-    if (!panelEl || !navEl) return null;
-    const p = panelEl.getBoundingClientRect();
-    const n = navEl.getBoundingClientRect();
-    const style = window.getComputedStyle(panelEl);
-    return {
-      panelBottom: p.bottom,
-      navTop: n.top,
-      overflowY: style.overflowY,
-      scrollHeight: panelEl.scrollHeight,
-      clientHeight: panelEl.clientHeight,
-    };
-  });
+  const bounds = await page.evaluate(
+    ([selector, ratio]) => {
+      const panelEl = document.querySelector('[data-testid="filters-panel"]');
+      const navEl = document.querySelector<HTMLElement>(selector as string);
+      const root = document.querySelector<HTMLElement>("[data-scroll-root]");
+      if (!panelEl || !navEl || !root) return null;
+      const p = panelEl.getBoundingClientRect();
+      const n = navEl.getBoundingClientRect();
+      const isRail = n.height > window.innerHeight * (ratio as number);
+      const style = window.getComputedStyle(panelEl);
+      return {
+        panelTop: p.top,
+        panelBottom: p.bottom,
+        limit: isRail ? root.getBoundingClientRect().bottom : n.top,
+        isRail,
+        maxHeightPx: Number.parseFloat(style.maxHeight) || 0,
+        overflowY: style.overflowY,
+      };
+    },
+    [PRIMARY_NAV, RAIL_HEIGHT_RATIO] as const
+  );
 
   expect(bounds).not.toBeNull();
-  expect(bounds!.panelBottom).toBeLessThanOrEqual(bounds!.navTop + 1);
+  expect(
+    bounds!.panelBottom,
+    `Panel bottom ${bounds!.panelBottom}px passed the ${
+      bounds!.isRail ? "scroll-root bottom" : "nav top"
+    } at ${bounds!.limit}px`
+  ).toBeLessThanOrEqual(bounds!.limit + 1);
   expect(bounds!.overflowY).toMatch(/auto|scroll/);
+
+  /**
+   * Regression guard for the nav-geometry bug: deriving the panel height from a
+   * top/side nav produced a permanent 140px box. With room available, use it.
+   */
+  const available = bounds!.limit - bounds!.panelTop - 8;
+  if (available > 300) {
+    expect(
+      bounds!.maxHeightPx,
+      `Panel clamped to ${bounds!.maxHeightPx}px despite ${Math.round(available)}px available`
+    ).toBeGreaterThan(200);
+  }
 
   const lastField = panel.locator('input[type="checkbox"]').last();
   await lastField.scrollIntoViewIfNeeded();

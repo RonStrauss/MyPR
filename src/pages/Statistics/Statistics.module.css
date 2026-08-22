@@ -105,6 +105,57 @@
   gap: 0.5rem;
 }
 
+/*
+ * Once the groups form a grid, every card gets the same footprint
+ * (`grid-auto-rows: 1fr` equalises rows, `stretch` equalises within a row), so a
+ * group with no lifts logged no longer punches a hole in the layout.
+ */
+@media (min-width: 768px) {
+  .groupList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+  }
+
+  .groupCard {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .groupBody,
+  .bestBtn {
+    flex: 1;
+  }
+
+  .bestBtn {
+    justify-content: center;
+  }
+
+  .groupEmpty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Coverage no longer needs a full-width row once three columns fit. */
+  .overview {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .statCardCoverage {
+    grid-column: auto;
+  }
+
+  .groupList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .groupCard {
   background: var(--bg-card);
   border: 1px solid var(--border);

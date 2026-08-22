@@ -30,7 +30,7 @@ export function Layout() {
         aria-hidden
       />
 
-      <nav className={styles.bottomNav} data-testid="bottom-nav">
+      <nav className={styles.primaryNav} data-testid="primary-nav" data-primary-nav>
         <NavLink
           to="/"
           end
@@ -69,7 +69,11 @@ export function AuthLayout() {
   const { t } = useTranslation();
 
   return (
-    <div className={styles.shell} data-scroll-root style={{ paddingBottom: 0 }}>
+    <div
+      className={`${styles.shell} ${styles.shellAuth}`}
+      data-scroll-root
+      style={{ paddingBottom: 0 }}
+    >
       <header className={styles.header}>
         <div className={styles.logo}>
           <img src="/dumbbell-transparent-bg.svg" alt="" className={styles.logoIcon} />

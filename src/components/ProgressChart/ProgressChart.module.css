@@ -11,6 +11,17 @@
   display: block;
 }
 
+/**
+ * The SVG viewBox is 2:1, so `height: auto` scales height with width — at 1400px
+ * wide it rendered ~700px tall and swallowed the page. Capping the wrapper width
+ * bounds the rendered height (~360px) without distorting the aspect ratio.
+ */
+@media (min-width: 768px) {
+  .wrap {
+    max-width: 720px;
+  }
+}
+
 .gridLine {
   stroke: var(--border);
   stroke-width: 1;

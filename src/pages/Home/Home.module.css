@@ -5,10 +5,74 @@
   margin-bottom: 1rem;
 }
 
+/**
+ * Editing below 1024px hides the list and shows only the form — identical to the
+ * previous early-return behaviour. At >= 1024px the form becomes a side panel and
+ * the list stays visible beside it.
+ */
+.layoutEditing .primary {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .layoutEditing {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+
+  .layoutEditing .primary {
+    display: block;
+  }
+
+  .editPanel {
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+}
+
 .list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+/*
+ * Tablet: two columns of PR cards. Cards stretch to their row height so a card
+ * with notes does not leave a gutter under its shorter neighbours.
+ */
+@media (min-width: 768px) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  /* The animation wrapper is the grid item, so it has to pass the stretched
+     row height down to the card it wraps. */
+  .listItem {
+    display: flex;
+  }
+
+  .listItem > * {
+    flex: 1;
+  }
+}
+
+/* Desktop: as many columns as fit comfortably. */
+@media (min-width: 1024px) {
+  .list {
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  }
 }
 
 .empty {
@@ -35,6 +99,13 @@
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
+}
+
+/* A full-width row for one counter reads as empty space on wide screens. */
+@media (min-width: 768px) {
+  .statsBar {
+    max-width: 420px;
+  }
 }
 
 .statBox {
