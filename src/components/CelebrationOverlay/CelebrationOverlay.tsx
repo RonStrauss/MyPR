@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import styles from "./CelebrationOverlay.module.css";
 
 type Props = {
@@ -19,7 +20,9 @@ export function CelebrationOverlay({ message, onDone }: Props) {
     return () => window.clearTimeout(t);
   }, [onDone]);
 
-  return (
+  // Portal to body so fixed positioning is not trapped by Layout's scroll
+  // root or the page-enter transform (which would center the card mid-list).
+  return createPortal(
     <div
       className={`${styles.overlay} ${visible ? styles.visible : styles.hide}`}
       role="dialog"
@@ -45,6 +48,7 @@ export function CelebrationOverlay({ message, onDone }: Props) {
         <p className={styles.emoji}>🏆</p>
         <p className={styles.message}>{message}</p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

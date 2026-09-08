@@ -1,7 +1,8 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  /* Above shell chrome (nav/header) and in-page stacking; portaled to body */
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;
